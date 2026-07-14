@@ -250,19 +250,22 @@ const gridTrainer = (() => {
   if (!cv) return {};
   const ctx = cv.getContext('2d');
   const W = cv.width, H = cv.height;
-  const M = 42;                    // שוליים לתוויות
-  const PLOT = W - M - 10;         // אזור השרטוט
-  const N = 5;                     // 5x5 משבצות (ק״מ)
-  const px = PLOT / N;             // פיקסלים לק״מ
+  // שוליים נפרדים לכל צד — נשמור מקום לתוויות ולכותרות הצירים
+  const ML = 46, MT = 30, MR = 16, MB = 48;
+  const N = 5;                                        // 5x5 משבצות (ק״מ)
+  const PLOT = Math.min(W - ML - MR, H - MT - MB);    // אזור שרטוט מרובע שנכנס בקנבס
+  const px = PLOT / N;                                // פיקסלים לק״מ
+  const X0 = ML, Y1 = MT + PLOT;                      // פינת מוצא (שמאל-תחתון) של הרשת
   const baseE = 23, baseN = 67;    // קווי רשת בסיס (מוצגים כשתי ספרות)
   let mode = 'read';
   let target = null;               // {eastVal, northVal, e3, n3}
   let clicked = null;
 
-  const toX = eVal => M + (eVal - baseE) * px;
-  const toY = nVal => (M + PLOT) - (nVal - baseN) * px; // צפון למעלה
-  const fromX = x => baseE + (x - M) / px;
-  const fromY = y => baseN + ((M + PLOT) - y) / px;
+  // מזרחית גדלה ימינה, צפונית גדלה כלפי מעלה (כמו במפה)
+  const toX = eVal => X0 + (eVal - baseE) * px;
+  const toY = nVal => Y1 - (nVal - baseN) * px;
+  const fromX = x => baseE + (x - X0) / px;
+  const fromY = y => baseN + (Y1 - y) / px;
 
   function randTarget() {
     const be = baseE + Math.floor(Math.random() * N);
@@ -285,29 +288,37 @@ const gridTrainer = (() => {
     // רשת עשיריות (עדינה)
     ctx.strokeStyle = 'rgba(169,116,58,0.18)'; ctx.lineWidth = 0.5;
     for (let i = 0; i <= N * 10; i++) {
-      const x = M + i * px / 10, y = (M + PLOT) - i * px / 10;
-      ctx.beginPath(); ctx.moveTo(x, M); ctx.lineTo(x, M + PLOT); ctx.stroke();
-      ctx.beginPath(); ctx.moveTo(M, y); ctx.lineTo(M + PLOT, y); ctx.stroke();
+      const x = X0 + i * px / 10, y = Y1 - i * px / 10;
+      ctx.beginPath(); ctx.moveTo(x, MT); ctx.lineTo(x, Y1); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(X0, y); ctx.lineTo(X0 + PLOT, y); ctx.stroke();
     }
-    // קווי רשת ראשיים (ק״מ)
+    // קווי רשת ראשיים (ק״מ) + תוויות
     ctx.strokeStyle = '#7d8c4e'; ctx.lineWidth = 1.4;
     ctx.fillStyle = '#33421f'; ctx.font = 'bold 15px Heebo, sans-serif';
     for (let i = 0; i <= N; i++) {
-      const x = M + i * px, y = M + i * px;
-      ctx.beginPath(); ctx.moveTo(x, M); ctx.lineTo(x, M + PLOT); ctx.stroke();
-      ctx.beginPath(); ctx.moveTo(M, y); ctx.lineTo(M + PLOT, y); ctx.stroke();
-      // תווית מזרחית (למטה)
+      const x = X0 + i * px;                 // קו מזרחית אנכי
+      const y = Y1 - i * px;                  // קו צפונית אופקי (i=0 למטה, i=N למעלה)
+      ctx.beginPath(); ctx.moveTo(x, MT); ctx.lineTo(x, Y1); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(X0, y); ctx.lineTo(X0 + PLOT, y); ctx.stroke();
+      // תווית מזרחית מתחת לרשת — גדלה משמאל (23) לימין (28)
       ctx.textAlign = 'center';
-      ctx.fillText(String(baseE + i), x, M + PLOT + 20);
-      // תווית צפונית (בצד ימין, RTL) — נשים משמאל
+      ctx.fillText(String(baseE + i), x, Y1 + 20);
+      // תווית צפונית משמאל לרשת — גדלה מלמטה (67) למעלה (72)
       ctx.textAlign = 'right';
-      ctx.fillText(String(baseN + (N - i)), M - 8, M + i * px + 5);
+      ctx.fillText(String(baseN + i), X0 - 8, y + 5);
     }
+    // חץ צפון (↑) בפינה — מבהיר שהצפון כלפי מעלה
+    const ax = X0 + PLOT - 16, ay0 = MT + 34, ay1 = MT + 8;
+    ctx.strokeStyle = '#b5482f'; ctx.fillStyle = '#b5482f'; ctx.lineWidth = 2.4;
+    ctx.beginPath(); ctx.moveTo(ax, ay0); ctx.lineTo(ax, ay1); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(ax, ay1 - 2); ctx.lineTo(ax - 5, ay1 + 7); ctx.lineTo(ax + 5, ay1 + 7); ctx.closePath(); ctx.fill();
+    ctx.font = 'bold 13px Heebo, sans-serif'; ctx.textAlign = 'center';
+    ctx.fillText('צ', ax, ay0 + 14);
     // כותרות צירים
-    ctx.fillStyle = '#4a5d2b'; ctx.font = '600 12px Heebo, sans-serif';
-    ctx.textAlign = 'center'; ctx.fillText('מזרחית ←', M + PLOT / 2, H - 6);
-    ctx.save(); ctx.translate(12, M + PLOT / 2); ctx.rotate(-Math.PI / 2);
-    ctx.fillText('צפונית ←', 0, 0); ctx.restore();
+    ctx.fillStyle = '#4a5d2b'; ctx.font = '600 13px Heebo, sans-serif';
+    ctx.textAlign = 'center'; ctx.fillText('מזרחית (ק״מ)', X0 + PLOT / 2, H - 8);
+    ctx.save(); ctx.translate(14, MT + PLOT / 2); ctx.rotate(-Math.PI / 2);
+    ctx.fillText('צפונית (ק״מ)', 0, 0); ctx.restore();
 
     // יעד
     if (target && mode === 'read') {
@@ -347,7 +358,7 @@ const gridTrainer = (() => {
     const rect = cv.getBoundingClientRect();
     const x = (ev.clientX - rect.left) * (W / rect.width);
     const y = (ev.clientY - rect.top) * (H / rect.height);
-    if (x < M || x > M + PLOT || y < M || y > M + PLOT) return;
+    if (x < X0 || x > X0 + PLOT || y < MT || y > Y1) return;
     const eVal = fromX(x), nVal = fromY(y);
     const err = Math.hypot(eVal - target.eastVal, nVal - target.northVal); // בק״מ
     const fb = document.getElementById('gridFeedback');
