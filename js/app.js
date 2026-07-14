@@ -37,12 +37,12 @@ const REGIONS = {
     elev:'הר מירון (~1,208 מ׳) — הגבוה בישראל שבתחום הקו הירוק.',
     nav:'צומח צפוף מגביל שדה ראייה; ריבוי רכסים ואוכפים מצריך דיוק בזיהוי צורות תבליט.',
     feat:'רכסים ואוכפים רבים, מדרונות תלולים (קווי גובה צפופים), יער בירוק.' },
-  carmel: { name:'הכרמל ועמק יזרעאל', color:'#6b7d3a', label:'כרמל / עמקים',
+  carmel: { name:'הכרמל ועמק יזרעאל', color:'#6b7d3a', label:'כרמל',
     terrain:'רכס הכרמל המיוער היורד לים, ולמרגלותיו עמק יזרעאל השטוח והחקלאי.',
     elev:'הכרמל עד ~546 מ׳; עמק יזרעאל כמעט מישורי.',
     nav:'ניגוד חד בין רכס תלול ומיוער לבין מישור פתוח — קל לזהות את קו המגע ביניהם כציר התמצאות.',
     feat:'מדרון תלול אחיד בכרמל, שטח פתוח ומיושב בעמק, צירי דרכים ברורים.' },
-  hasharon: { name:'מישור החוף והשרון', color:'#8a9a5b', label:'חוף / שרון',
+  hasharon: { name:'מישור החוף והשרון', color:'#8a9a5b', label:'שרון',
     terrain:'מישור חופי שטוח ורחב לאורך הים התיכון, עתיר יישובים, פרדסים וכבישים.',
     elev:'נמוך, קרוב לגובה פני הים; כורכר וגבעות חול נמוכות.',
     nav:'מעט צורות תבליט לזיהוי — מנווטים בעיקר לפי מאפיינים מלאכותיים: כבישים, יישובים, מסילה וקו החוף.',
@@ -52,17 +52,17 @@ const REGIONS = {
     elev:'פסגות סביב 800–940 מ׳ (בעל חצור, הר עיבל).',
     nav:'רכסים מקבילים ואוכפים ביניהם; חשוב להבחין בין ערוצים היורדים מזרחה (למדבר) למערבה (לחוף).',
     feat:'קווי רכס ברורים, כפרים על ראשי גבעות, טרסות.' },
-  yerushalaim: { name:'ירושלים והרי יהודה', color:'#8a6a35', label:'ירושלים / הרי יהודה',
+  yerushalaim: { name:'ירושלים והרי יהודה', color:'#8a6a35', label:'ירושלים',
     terrain:'רמה הררית עם עמקים חקלאיים; מדרון מערבי מתון (לשפלה) ומדרון מזרחי תלול (למדבר).',
     elev:'ירושלים ~750–800 מ׳; פסגות עד מעל 1,000 מ׳.',
     nav:'"קו פרשת המים" הארצי עובר כאן — משני צדדיו הערוצים זורמים לכיוונים מנוגדים; כלי התמצאות מרכזי.',
     feat:'קו פרשת מים בולט, ניגוד מדרונות, יישוב צפוף.' },
-  yehuda_desert: { name:'מדבר יהודה וים המלח', color:'#b08a4a', label:'מדבר יהודה',
+  yehuda_desert: { name:'מדבר יהודה וים המלח', color:'#b08a4a', label:'מ. יהודה',
     terrain:'מדרון מדברי תלול היורד ממזרח הרי יהודה אל בקע ים המלח, חתוך בנחלי אכזב עמוקים (קניונים).',
     elev:'מ־כ־800 מ׳ עד ל־430- מ׳ (החוף הנמוך ביבשה) — הפרש עצום במרחק קצר.',
     nav:'שטח פתוח וחשוף (שדה ראייה מצוין) אך הנחלים העמוקים והמצוקים חוסמים ומסכנים; מחייב תכנון ציר זהיר.',
     feat:'קווי גובה צפופים מאוד, מצוקים, נחלי אכזב, מעטה צומח דליל.' },
-  negev_north: { name:'צפון הנגב ובקעת באר שבע', color:'#c19a5b', label:'צפון הנגב',
+  negev_north: { name:'צפון הנגב ובקעת באר שבע', color:'#c19a5b', label:'צ. הנגב',
     terrain:'מרחבי לס וגבעות מתונות, בתרונות (ערוצי סחף) ובקעות פתוחות.',
     elev:'מתון, מאות מטרים בודדים.',
     nav:'צורות תבליט רכות ומעט נקודות ייחוס — אתגר בזיהוי מדויק; הבתרונות עלולים להטעות.',
@@ -417,14 +417,14 @@ const gridTrainer = (() => {
     const t = mk('text', { x: x2 + lx, y: y2 - 6, fill: color, 'font-size': 13, 'font-weight': 700, 'text-anchor': 'middle' }, label);
     svg.appendChild(t);
   }
-  svg.appendChild(mk('circle', { cx: ox, cy: oy, r: 5, fill: '#22271c' }));
-  line(-gridConv, '#4a5d2b', 4, 'רשת', -14);   // צפון רשת (מעט שמאלה)
-  line(0, '#22271c', 3, 'אמיתי', 0);            // צפון אמיתי
-  line(decl, '#b5482f', 4, 'מגנטי', 16);        // צפון מגנטי (מזרחה=ימינה)
+  svg.appendChild(mk('circle', { cx: ox, cy: oy, r: 5, fill: '#8a9078' }));
+  line(-gridConv, '#6b8138', 4, 'רשת', -14);    // צפון רשת (מעט שמאלה)
+  line(0, '#9aa08a', 3, 'אמיתי', 0);            // צפון אמיתי (אפור — קריא בשני המצבים)
+  line(decl, '#d4593f', 4, 'מגנטי', 16);        // צפון מגנטי (מזרחה=ימינה)
   // קשת סטייה
   svg.appendChild(mk('path', { d: `M ${ox},${oy - 70} A 70 70 0 0 1 ${ox + 70 * Math.sin(rad(decl))},${oy - 70 * Math.cos(rad(decl))}`, fill: 'none', stroke: '#b5482f', 'stroke-width': 1.5, 'stroke-dasharray': '3 2' }));
-  svg.appendChild(mk('text', { x: ox + 26, y: oy - 82, fill: '#b5482f', 'font-size': 12, 'font-weight': 700 }, '≈5° מזרחה'));
-  svg.appendChild(mk('text', { x: ox, y: oy + 30, fill: '#4b5140', 'font-size': 11, 'text-anchor': 'middle' }, 'נקודת התצפית'));
+  svg.appendChild(mk('text', { x: ox + 26, y: oy - 82, fill: '#d4593f', 'font-size': 12, 'font-weight': 700 }, '≈5° מזרחה'));
+  svg.appendChild(mk('text', { x: ox, y: oy + 30, fill: '#9aa08a', 'font-size': 11, 'text-anchor': 'middle' }, 'נקודת התצפית'));
 })();
 
 /* =======================================================================
@@ -440,8 +440,16 @@ const gridTrainer = (() => {
   const px = PLOT_W / KM;
   const baseE = 231, baseN = 660;  // מוצא רשת להצגת נ״צ
   const DECL = 5;
-  let wps = [];                    // {x,y,name}
+  let wps = [];                    // {x,y,name,type}
+  let wpType = 'נ.ה';
+  const TYPE_COLORS = { 'נ.ה':'#4a5d2b', 'נ.צ':'#33421f', 'מ.ח':'#b5482f', 'נ.ב':'#a9743a', 'נ.ס':'#26301c' };
   const strideEl = document.getElementById('stride');
+  document.querySelectorAll('#wpTypeSeg button').forEach(b => {
+    b.addEventListener('click', () => {
+      document.querySelectorAll('#wpTypeSeg button').forEach(x => x.classList.remove('on'));
+      b.classList.add('on'); wpType = b.dataset.type;
+    });
+  });
 
   const eOf = x => baseE + (x - M) / px;
   const nOf = y => baseN + ((M + PLOT_H) - y) / px;
@@ -487,11 +495,18 @@ const gridTrainer = (() => {
     }
     // נקודות
     wps.forEach((w, i) => {
-      ctx.fillStyle = '#33421f'; ctx.beginPath(); ctx.arc(w.x, w.y, 8, 0, TAU); ctx.fill();
+      ctx.fillStyle = TYPE_COLORS[w.type] || '#33421f'; ctx.beginPath(); ctx.arc(w.x, w.y, 9, 0, TAU); ctx.fill();
       ctx.strokeStyle = '#fff'; ctx.lineWidth = 2; ctx.stroke();
       ctx.fillStyle = '#fff'; ctx.font = 'bold 11px Heebo, sans-serif'; ctx.textAlign = 'center';
       ctx.fillText(String(i + 1), w.x, w.y + 4);
-      if (w.name) { ctx.fillStyle = '#22271c'; ctx.font = '600 11px Heebo, sans-serif'; ctx.fillText(w.name, w.x, w.y - 12); }
+      // תווית סוג + שם מעל הנקודה
+      const lbl = w.type + (w.name ? ' · ' + w.name : '');
+      ctx.font = '700 11px Heebo, sans-serif';
+      const tw = ctx.measureText(lbl).width;
+      ctx.fillStyle = 'rgba(255,255,255,0.82)';
+      ctx.fillRect(w.x - tw / 2 - 4, w.y - 26, tw + 8, 15);
+      ctx.fillStyle = TYPE_COLORS[w.type] || '#22271c';
+      ctx.fillText(lbl, w.x, w.y - 15);
     });
     updateCard();
   }
@@ -501,7 +516,7 @@ const gridTrainer = (() => {
     const stride = +strideEl.value / 100; // מ׳
     let total = 0;
     if (wps.length < 2) {
-      tbody.innerHTML = '<tr><td colspan="7" class="small" style="text-align:center;color:var(--ink-soft)">הניחו לפחות שתי נקודות ביקורת כדי לייצר כרטיס ניווט…</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="8" class="small" style="text-align:center;color:var(--text-soft)">הניחו לפחות שתי נקודות כדי לייצר כרטיס ניווט…</td></tr>';
     } else {
       let html = '';
       for (let i = 0; i < wps.length - 1; i++) {
@@ -512,10 +527,12 @@ const gridTrainer = (() => {
         const gridAz = azimuth(de, dn);
         const magAz = norm360(gridAz - DECL);
         const steps = Math.round(distM / stride);
-        const from = a.name || `נק׳ ${i + 1}`, to = b.name || `נק׳ ${i + 2}`;
+        const from = (a.type || 'נק׳') + (a.name ? ' ' + a.name : ' ' + (i + 1));
+        const to = (b.type || 'נק׳') + (b.name ? ' ' + b.name : ' ' + (i + 2));
         html += `<tr>
           <td class="leg-num">${i + 1}</td>
           <td>${from} ← ${to}</td>
+          <td>${b.type || '—'}</td>
           <td>${nz(b.x, b.y)}</td>
           <td>${gridAz.toFixed(0)}°</td>
           <td>${magAz.toFixed(0)}°</td>
@@ -535,7 +552,7 @@ const gridTrainer = (() => {
     const y = (ev.clientY - rect.top) * (H / rect.height);
     if (x < M || x > M + PLOT_W || y < M || y > M + PLOT_H) return;
     const nameEl = document.getElementById('wpName');
-    wps.push({ x, y, name: nameEl.value.trim() });
+    wps.push({ x, y, name: nameEl.value.trim(), type: wpType });
     nameEl.value = '';
     draw();
   });
@@ -554,7 +571,7 @@ const gridTrainer = (() => {
       th{background:#33421f;color:#fff}.meta{color:#555;font-size:14px}</style></head><body>
       <h1>כרטיס ניווט</h1>
       <p class="meta">סטייה מגנטית בשימוש: ${DECL}° · אורך צעד: ${strideEl.value} ס״מ · מספר צלעות: ${wps.length - 1}</p>
-      <table><thead><tr><th>רגל</th><th>מ־ ← אל</th><th>נ״צ יעד</th><th>אזימוט רשת</th><th>אזימוט מגנטי</th><th>מרחק</th><th>אומדן צעדים</th></tr></thead>
+      <table><thead><tr><th>רגל</th><th>מ־ ← אל</th><th>סוג</th><th>נ״צ יעד</th><th>אזימוט רשת</th><th>אזימוט מגנטי</th><th>מרחק</th><th>אומדן צעדים</th></tr></thead>
       <tbody>${rows}</tbody></table>
       <p class="meta">הופק באתר "ניווט וקריאת מפה". לאימות תמיד השוו למפה המעודכנת ולנהלים.</p>
       </body></html>`);
@@ -562,6 +579,168 @@ const gridTrainer = (() => {
   });
 
   draw();
+})();
+
+/* =======================================================================
+   7. החלפת מצב תצוגה (Dark / Light)
+   ======================================================================= */
+(() => {
+  const btn = document.getElementById('themeToggle');
+  if (!btn) return;
+  const sync = () => { btn.textContent = document.documentElement.getAttribute('data-theme') === 'dark' ? '☀️' : '🌙'; };
+  sync();
+  btn.addEventListener('click', () => {
+    const next = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', next);
+    try { localStorage.setItem('theme', next); } catch (e) {}
+    sync();
+  });
+})();
+
+/* =======================================================================
+   8. משחק הצלבה: השטח בעין ← השטח במפה (קווי גובה)
+   ======================================================================= */
+(() => {
+  const photosEl = document.getElementById('matchPhotos');
+  const mapsEl = document.getElementById('matchMaps');
+  if (!photosEl || !mapsEl) return;
+  const C = '#a9743a'; // צבע קווי גובה
+
+  // תצוגת "שטח" (מבט תלת־ממדי/צד) ותצוגת "מפה" (קווי גובה) לכל צורה
+  const FEATURES = [
+    { id:'peak', name:'פסגה', sub:'נקודה גבוהה, יורדת לכל הכיוונים',
+      side:`<polygon points="8,52 45,10 82,52" fill="#8a9a5b"/><polygon points="45,10 82,52 55,52" fill="#6b7d3a"/><line x1="45" y1="10" x2="45" y2="52" stroke="#4a5d2b" stroke-width="1"/>`,
+      map:`<g fill="none" stroke="${C}" stroke-width="1.6"><ellipse cx="45" cy="31" rx="30" ry="21"/><ellipse cx="45" cy="31" rx="21" ry="14.5"/><ellipse cx="45" cy="31" rx="12" ry="8"/><ellipse cx="45" cy="31" rx="4" ry="2.6"/></g>` },
+    { id:'saddle', name:'אוכף', sub:'נקודה נמוכה בין שתי פסגות',
+      side:`<path d="M6,52 C16,16 30,16 45,38 C60,16 74,16 84,52 Z" fill="#8a9a5b"/><path d="M6,52 C16,16 30,16 45,38 C60,16 74,16 84,52" fill="none" stroke="#4a5d2b" stroke-width="1"/>`,
+      map:`<g fill="none" stroke="${C}" stroke-width="1.6"><path d="M8,31 Q26,14 44,31"/><path d="M46,31 Q64,14 82,31"/><path d="M8,31 Q26,48 44,31"/><path d="M46,31 Q64,48 82,31"/><ellipse cx="24" cy="31" rx="8" ry="6"/><ellipse cx="66" cy="31" rx="8" ry="6"/></g>` },
+    { id:'ridge', name:'שלוחה', sub:'לשון גבוהה, קווי גובה ⋀ במורד',
+      side:`<path d="M6,52 C26,46 44,26 84,14 L84,52 Z" fill="#8a9a5b"/><path d="M6,52 C26,46 44,26 84,14" fill="none" stroke="#4a5d2b" stroke-width="1.2"/>`,
+      map:`<g fill="none" stroke="${C}" stroke-width="1.6"><path d="M14,14 Q45,34 76,14"/><path d="M14,26 Q45,46 76,26"/><path d="M14,38 Q45,58 76,38"/></g>` },
+    { id:'valley', name:'ערוץ', sub:'תוואי ניקוז, קווי גובה ⋁ במעלה',
+      side:`<polygon points="6,14 45,52 84,14 84,52 6,52" fill="#8a9a5b"/><polyline points="6,14 45,52 84,14" fill="none" stroke="#4a5d2b" stroke-width="1"/><line x1="45" y1="52" x2="45" y2="30" stroke="#4a7c8c" stroke-width="1.6"/>`,
+      map:`<g fill="none" stroke="${C}" stroke-width="1.6"><path d="M14,46 Q45,26 76,46"/><path d="M14,34 Q45,14 76,34"/><path d="M14,58 Q45,38 76,58"/></g><line x1="45" y1="18" x2="45" y2="50" stroke="#4a7c8c" stroke-width="1.4" stroke-dasharray="2 2"/>` },
+    { id:'cliff', name:'מצוק', sub:'שינוי גובה חד — קווים נדחסים',
+      side:`<path d="M6,52 L6,34 L46,34 L46,12 L84,12 L84,52 Z" fill="#8a9a5b"/><line x1="46" y1="12" x2="46" y2="34" stroke="#b5482f" stroke-width="2.2"/>`,
+      map:`<g fill="none" stroke="${C}" stroke-width="1.4"><line x1="14" y1="8" x2="14" y2="52"/><line x1="22" y1="8" x2="22" y2="52"/><line x1="52" y1="8" x2="52" y2="52"/><line x1="55" y1="8" x2="55" y2="52"/><line x1="58" y1="8" x2="58" y2="52"/><line x1="61" y1="8" x2="61" y2="52"/></g><path d="M52,8 l-4,4 M52,20 l-4,4 M52,32 l-4,4 M52,44 l-4,4" stroke="${C}" stroke-width="1"/>` }
+  ];
+
+  const svg = inner => `<svg width="70" height="50" viewBox="0 0 90 60" xmlns="http://www.w3.org/2000/svg">${inner}</svg>`;
+  const shuffle = arr => { const a = arr.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+  let selPhoto = null, done = 0;
+  const fb = document.getElementById('matchFeedback');
+
+  function render() {
+    selPhoto = null; done = 0;
+    fb.textContent = ''; fb.className = 'feedback';
+    photosEl.querySelectorAll('.match-item').forEach(n => n.remove());
+    mapsEl.querySelectorAll('.match-item').forEach(n => n.remove());
+    shuffle(FEATURES).forEach(f => {
+      const el = document.createElement('div');
+      el.className = 'match-item'; el.dataset.id = f.id;
+      el.innerHTML = svg(f.side) + `<div><div class="mtext">${f.name}</div><div class="msub">${f.sub}</div></div>`;
+      el.addEventListener('click', () => selectPhoto(el));
+      photosEl.appendChild(el);
+    });
+    shuffle(FEATURES).forEach(f => {
+      const el = document.createElement('div');
+      el.className = 'match-item'; el.dataset.id = f.id;
+      el.style.justifyContent = 'center';
+      el.innerHTML = svg(f.map);
+      el.addEventListener('click', () => selectMap(el));
+      mapsEl.appendChild(el);
+    });
+  }
+  function selectPhoto(el) {
+    if (el.classList.contains('done')) return;
+    photosEl.querySelectorAll('.match-item').forEach(n => n.classList.remove('selected'));
+    selPhoto = el; el.classList.add('selected');
+  }
+  function selectMap(el) {
+    if (el.classList.contains('done') || !selPhoto) return;
+    if (el.dataset.id === selPhoto.dataset.id) {
+      el.classList.add('done'); selPhoto.classList.add('done'); selPhoto.classList.remove('selected');
+      selPhoto = null; done++;
+      fb.className = 'feedback ok'; fb.textContent = `✓ נכון! (${done}/${FEATURES.length})`;
+      if (done === FEATURES.length) fb.textContent = `🎉 מצוין! זיהיתם את כל הצורות (${done}/${FEATURES.length}).`;
+    } else {
+      el.classList.add('wrong');
+      fb.className = 'feedback bad'; fb.textContent = '✗ לא מתאים. שימו לב לתבנית קווי הגובה.';
+      setTimeout(() => el.classList.remove('wrong'), 350);
+    }
+  }
+  document.getElementById('matchReset').addEventListener('click', render);
+  render();
+})();
+
+/* =======================================================================
+   9. בוחן — קריאת מפה, ניווט ובטיחות
+   ======================================================================= */
+(() => {
+  const host = document.getElementById('quizCard');
+  if (!host) return;
+  const Q = [
+    { q:'במפה בקנה מידה 1:50,000, כמה מטרים בשטח מייצג סנטימטר אחד במפה?',
+      o:['50 מ׳','500 מ׳','5,000 מ׳','1,000 מ׳'], a:1, e:'1:50,000 → 1 ס״מ = 50,000 ס״מ = 500 מ׳. משבצת (2 ס״מ) = 1 ק״מ. [מקור 5]' },
+    { q:'מהו פרש הגובה המקובל בין שני קווי גובה סמוכים במפות ישראל (1:50,000 / 1:25,000)?',
+      o:['5 מ׳','10 מ׳','25 מ׳','100 מ׳'], a:1, e:'פרש הגובה המקובל הוא 10 מ׳, וכל קו חמישי מודגש כ״קו אב״. [מקור 4]' },
+    { q:'קווי גובה צפופים (קרובים זה לזה) מעידים על…',
+      o:['מדרון מתון','שטח מישורי','מדרון תלול','ביצה'], a:2, e:'ככל שהקווים צפופים יותר — המדרון תלול יותר; קווים מרוחקים = מדרון מתון. [מקור 4]' },
+    { q:'בקריאת נקודת־ציון (נ״צ) — מה קוראים קודם?',
+      o:['הצפונית ואז המזרחית','המזרחית ואז הצפונית','הגובה ואז המרחק','לפי סדר אקראי'], a:1, e:'הכלל: "ימין ואז למעלה" — קודם המזרחית (הציר האנכי משמאל לנקודה) ואז הצפונית. [מקור 2]' },
+    { q:'אם אזימוט ההליכה שלכם אל המטרה הוא 70°, מהו האזימוט החוזר?',
+      o:['110°','160°','250°','290°'], a:2, e:'אזימוט חוזר = אזימוט ± 180°. 70° + 180° = 250°. [מקור 6]' },
+    { q:'הצפון המגנטי בישראל נמצא ביחס לצפון הגאוגרפי…',
+      o:['מזרחה בכ־5°','מערבה בכ־5°','זהה בדיוק','מזרחה בכ־20°'], a:0, e:'בישראל הצפון המגנטי מזרחית לגאוגרפי בכ־4.9°–5° (משתנה עם הזמן). מרשת למצפן מפחיתים את הסטייה. [מקור 7, 11]' },
+    { q:'לפי מנחה 011, בציר ניווט רגלי שאורכו 10 ק״מ ומעלה — מה חובה לקבוע?',
+      o:['לפחות מנחת מסוקים','לפחות נקודת בקרה (נ.ב) אחת','שני מדריכים','ניווט ביום בלבד'], a:1, e:'בציר רגלי ≥10 ק״מ חובה לפחות נ.ב אחת שכל המנווטים עוברים דרכה (בקרה ע״י חפ״ק). [מקור 13]' },
+    { q:'לפי מנחה 011, מהו המרחק המזערי שבו מותר לקבוע נקודת ניווט מבאר, בור או מכשול פתוח?',
+      o:['20 מ׳','50 מ׳','100 מ׳','200 מ׳'], a:3, e:'אין לקבוע נ״צ/נ.ה/מ.ח/נ.ב/נ.ס במרחק קטן מ־200 מ׳ ממכשולים פתוחים, תוך ציונם בתדריך. [מקור 13]' },
+    { q:'לפי מנחה 011, מהו ציון המעבר במבחן הבטיחות בנושא "ניווטים"?',
+      o:['60','70','85','100'], a:2, e:'כל מנווט חייב לעבור מבחן בטיחות בנושא ניווטים בציון 85 לפחות לפני ביצוע ניווט. [מקור 13]' },
+    { q:'כיצד ייראו קווי הגובה של ערוץ (אפיק ניקוז)?',
+      o:['מעגלים סגורים','⋁ שקודקודו פונה במעלה (נגד זרימת המים)','קווים ישרים ומקבילים','⋀ שקודקודו פונה במורד'], a:1, e:'בערוץ קווי הגובה יוצרים ⋁ שקודקודו פונה במעלה; בשלוחה הפוך — ⋀ במורד. [מקור 4]' }
+  ];
+  let i = 0, score = 0, answered = false;
+
+  function render() {
+    if (i >= Q.length) { return finish(); }
+    const q = Q[i]; answered = false;
+    host.innerHTML = `
+      <div class="quiz-progress">שאלה ${i + 1} מתוך ${Q.length} · ניקוד נוכחי: ${score}</div>
+      <p class="quiz-q">${q.q}</p>
+      <div class="quiz-opts">${q.o.map((op, k) => `<button class="quiz-opt" data-k="${k}">${op}</button>`).join('')}</div>
+      <div class="quiz-explain hidden" id="qExplain"></div>
+      <button class="btn hidden" id="qNext" style="margin-top:14px">${i === Q.length - 1 ? 'לתוצאה' : 'לשאלה הבאה ←'}</button>`;
+    host.querySelectorAll('.quiz-opt').forEach(b => b.addEventListener('click', () => answer(+b.dataset.k)));
+    host.querySelector('#qNext').addEventListener('click', () => { i++; render(); });
+  }
+  function answer(k) {
+    if (answered) return; answered = true;
+    const q = Q[i];
+    const opts = host.querySelectorAll('.quiz-opt');
+    opts.forEach((b, idx) => { b.disabled = true; if (idx === q.a) b.classList.add('correct'); });
+    if (k === q.a) { score++; }
+    else { opts[k].classList.add('incorrect'); }
+    const ex = host.querySelector('#qExplain');
+    ex.className = 'quiz-explain note' + (k === q.a ? '' : ' warn');
+    ex.innerHTML = (k === q.a ? '<b>✓ נכון! </b>' : '<b>✗ לא מדויק. </b>') + q.e;
+    host.querySelector('#qNext').classList.remove('hidden');
+  }
+  function finish() {
+    const pct = Math.round(score / Q.length * 100);
+    const pass = pct >= 85;
+    host.innerHTML = `
+      <div class="quiz-result">
+        <div class="score">${pct}</div>
+        <div class="verdict" style="color:${pass ? '#4e9a3a' : 'var(--danger)'}">${pass ? '✓ עברת! (ציון מעבר 85)' : 'עדיין לא — ציון המעבר הוא 85'}</div>
+        <p>ענית נכון על ${score} מתוך ${Q.length} שאלות.</p>
+        <p class="small">בשטח, מבחן הבטיחות בניווטים הוא תנאי חובה לפני ביצוע ניווט (מנחה 011).</p>
+        <button class="btn" id="qRestart" style="margin-top:10px">מבחן חוזר ↻</button>
+      </div>`;
+    host.querySelector('#qRestart').addEventListener('click', () => { i = 0; score = 0; render(); });
+  }
+  render();
 })();
 
 /* ---------- אתחול ---------- */

@@ -3,46 +3,66 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ניווט וקריאת מפה — מדריך אינטראקטיבי לצוער</title>
-<meta name="description" content="אתר לימוד אינטראקטיבי לצוערים בעולם קריאת המפה והניווט: יסודות, מפה אינטראקטיבית של ישראל, כלי דקירת נ״צ וחישוב אזימוט, ופעילות תכנון ציר ניווט. מבוסס מקורות.">
+<title>הניווטיה — מדריך אינטראקטיבי לקריאת מפה וניווט לצוער</title>
+<meta name="description" content="הניווטיה: אתר לימוד אינטראקטיבי לצוערים בקריאת מפה וניווט — יסודות, מפה אינטראקטיבית של ישראל, כלי דקירת נ״צ ואזימוט, בניית ציר ניווט, פעילויות הצלבה ובוחן. מבוסס מנחה 011 ומקורות מאומתים.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='46' fill='%2333421f' stroke='%23d4a02c' stroke-width='6'/%3E%3Cpolygon points='50,16 60,54 50,46 40,54' fill='%23d4a02c'/%3E%3Cpolygon points='50,84 40,46 50,54 60,46' fill='%23efe7d0'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;600;700;800&display=swap" rel="stylesheet">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='46' fill='%2333421f' stroke='%23d4a02c' stroke-width='6'/%3E%3Cpolygon points='50,16 60,54 50,46 40,54' fill='%23d4a02c'/%3E%3Cpolygon points='50,84 40,46 50,54 60,46' fill='%23efe7d0'/%3E%3C/svg%3E">
 <link rel="stylesheet" href="css/style.css">
+<script>
+  // ערכת נושא — לפני הצביעה כדי למנוע הבהוב
+  (function(){try{var t=localStorage.getItem('theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
+</script>
 </head>
 <body>
 
 <!-- ============ HEADER ============ -->
 <header class="site-header">
   <div class="nav-wrap">
-    <div class="brand"><span class="logo">✧</span><span>ניווט וקריאת מפה</span></div>
+    <div class="brand"><span class="logo">✧</span><span>הניווטיה</span></div>
     <nav class="nav-links">
       <a href="#fundamentals">יסודות</a>
-      <a href="#contours">תבליט וקווי גובה</a>
+      <a href="#contours">קווי גובה</a>
+      <a href="#match">הצלבה</a>
       <a href="#map">מפת ישראל</a>
       <a href="#nz">דקירת נ״צ</a>
       <a href="#azimuth">אזימוט</a>
-      <a href="#norths">שלושת הצפונים</a>
+      <a href="#norths">צפונים</a>
+      <a href="#route">בניית ציר</a>
       <a href="#planner">תכנון ציר</a>
+      <a href="#quiz">בוחן</a>
       <a href="#sources">מקורות</a>
     </nav>
+    <button class="theme-toggle" id="themeToggle" aria-label="החלפת מצב תצוגה" title="מצב יום / לילה">🌙</button>
   </div>
 </header>
 
 <!-- ============ HERO ============ -->
 <section class="hero">
   <div class="hero-inner">
+    <p class="tagline">◆ ה־נ־י־ו־ו־ט־י־ה ◆</p>
     <h1>קריאת מפה וניווט — מדריך אינטראקטיבי לצוער</h1>
-    <p class="sub">כל מה שצריך כדי לקרוא את השטח מתוך המפה: יסודות טופוגרפיים, מפה אינטראקטיבית של ארץ ישראל, כלי לדקירת נקודת־ציון וחישוב אזימוט, וסדנה לתכנון ציר ניווט — הכול מבוסס על מקורות מאומתים.</p>
+    <p class="sub">מ־איך קוראים את השטח מתוך המפה ועד איך בונים ציר ניווט שלם: יסודות טופוגרפיים, מפה אינטראקטיבית של ישראל, כלים לדקירת נ״צ וחישוב אזימוט, פעילויות הצלבה, בוחן, וסדנת תכנון — הכול מבוסס על מנחה 011 של צה״ל ומקורות מאומתים.</p>
     <div class="cta-row">
       <a class="btn" href="#map">למפה האינטראקטיבית</a>
-      <a class="btn ghost" href="#nz">לכלי דקירת נ״צ</a>
+      <a class="btn ghost" href="#route">איך בונים ציר ניווט?</a>
+      <a class="btn nlm" href="https://notebooklm.google.com/notebook/dc447f04-66ca-4562-969d-5c3c92c9e361" target="_blank" rel="noopener">🤖 עוזר AI ב־NotebookLM</a>
     </div>
   </div>
 </section>
 
 <main>
+
+  <!-- ============ NOTEBOOKLM BANNER ============ -->
+  <div class="nlm-banner">
+    <div class="nlm-ico">🤖</div>
+    <div class="nlm-body">
+      <h3>העוזר החכם של הניווטיה</h3>
+      <p>שוחחו עם מחברת NotebookLM שנבנתה על מנחה 011 ומקורות הניווט — שאלו שאלות בשפה חופשית וקבלו תשובות מבוססות־מקור, סיכומים ותרגול.</p>
+    </div>
+    <a class="btn nlm" href="https://notebooklm.google.com/notebook/dc447f04-66ca-4562-969d-5c3c92c9e361" target="_blank" rel="noopener">פתחו ב־NotebookLM ↗</a>
+  </div>
 
   <!-- ============ 1. FUNDAMENTALS ============ -->
   <section class="section" id="fundamentals">
@@ -51,27 +71,22 @@
       <h2><span class="num">1</span>יסודות קריאת המפה</h2>
       <p class="lead">מפה טופוגרפית היא <b>רישום אופקי של השטח במבט אנכי מלמעלה</b>, המבוטא באמצעות סמלים מוסכמים.<sup class="ref"><a href="#src5">5</a></sup> ארבעת אבני־היסוד של קריאת מפה הן: נתוני המפה, רשת הקואורדינטות, הכיוונים, וקנה־המידה ומדידת מרחקים.<sup class="ref"><a href="#src4">4</a></sup></p>
     </div>
-
     <div class="grid-3">
       <div class="feature">
-        <div class="ico">📐</div>
-        <h3>קנה מידה</h3>
-        <p>קנה־מידה 1:50,000 פירושו שכל יחידת אורך במפה מייצגת 50,000 כמותה בשטח — כלומר <b>1 ס״מ במפה = 500 מ׳ בשטח</b>. משבצת הרשת היא 2 ס״מ במפה = <b>1 ק״מ אווירי</b> בשטח. במפת 1:25,000 (מפורטת יותר) 1 ס״מ = 250 מ׳.<sup class="ref"><a href="#src5">5</a></sup></p>
+        <div class="ico">📐</div><h3>קנה מידה</h3>
+        <p>קנה־מידה 1:50,000 פירושו שכל יחידת אורך במפה מייצגת 50,000 כמותה בשטח — כלומר <b>1 ס״מ במפה = 500 מ׳ בשטח</b>. משבצת הרשת היא 2 ס״מ במפה = <b>1 ק״מ אווירי</b>. במפת 1:25,000 (מפורטת יותר) 1 ס״מ = 250 מ׳.<sup class="ref"><a href="#src5">5</a></sup></p>
       </div>
       <div class="feature">
-        <div class="ico">🎨</div>
-        <h3>מקרא וצבעים</h3>
-        <p>הסמלים במפה משתמשים בצבעים מוסכמים: <b>חום</b> לקווי גובה ותבליט, <b>כחול</b> למים, <b>ירוק</b> לצומח, <b>שחור</b> למבנים ומידע, ו<b>אדום</b> לדרכים ראשיות. המקרא (מפתח הסמלים) מופיע בשולי המפה.<sup class="ref"><a href="#src5">5</a></sup></p>
+        <div class="ico">🎨</div><h3>מקרא וצבעים</h3>
+        <p>הסמלים במפה בצבעים מוסכמים: <b>חום</b> לקווי גובה ותבליט, <b>כחול</b> למים, <b>ירוק</b> לצומח, <b>שחור</b> למבנים ומידע, ו<b>אדום</b> לדרכים ראשיות. המקרא מופיע בשולי המפה.<sup class="ref"><a href="#src5">5</a></sup></p>
       </div>
       <div class="feature">
-        <div class="ico">📏</div>
-        <h3>מדידת מרחק</h3>
-        <p>המרחק הנמדד במפה הוא <b>אווירי ואופקי</b> — הוא אינו מתחשב בעליות ובירידות של הטופוגרפיה. לכן מרחק ההליכה בפועל בשטח הררי גדול מהמרחק שנמדד על המפה.<sup class="ref"><a href="#src5">5</a></sup></p>
+        <div class="ico">📏</div><h3>מדידת מרחק</h3>
+        <p>המרחק הנמדד במפה הוא <b>אווירי ואופקי</b> — אינו מתחשב בעליות ובירידות. לכן מרחק ההליכה בפועל בשטח הררי גדול מהמרחק שנמדד על המפה.<sup class="ref"><a href="#src5">5</a></sup></p>
       </div>
     </div>
-
     <div class="note">
-      <b>מהי נקודת ציון (נ״צ)?</b> נקודה על גבי המפה המציינת מיקום בשטח באמצעות קואורדינטות. שמה מורכב משני מספרים: השמאלי הוא ה<b>מזרחית</b> (קו האורך במפה) והימני הוא ה<b>צפונית</b> (קו הרוחב).<sup class="ref"><a href="#src2">2</a></sup> נרחיב על דקירת נ״צ בפרק המתאים.
+      <b>מהי נקודת ציון (נ״צ)?</b> נקודה על המפה המציינת מיקום בשטח באמצעות קואורדינטות. שמה מורכב משני מספרים: השמאלי הוא ה<b>מזרחית</b> (קו האורך) והימני ה<b>צפונית</b> (קו הרוחב).<sup class="ref"><a href="#src2">2</a></sup>
     </div>
   </section>
 
@@ -80,9 +95,8 @@
     <div class="section-head">
       <span class="kicker">שלב ב׳</span>
       <h2><span class="num">2</span>תבליט וקווי גובה</h2>
-      <p class="lead">קו גובה הוא קו דמיוני המחבר נקודות בעלות אותו <b>רום</b> (גובה מעל פני הים).<sup class="ref"><a href="#src8">8</a></sup> במפות ישראל של 1:50,000 ו־1:25,000, ה<b>פרש הגובה</b> בין שני קווים סמוכים הוא בדרך־כלל <b>10 מטרים</b>, וכל קו חמישי (כל 50 מ׳) או כל 100 מ׳ מודגש כ״קו אב״.<sup class="ref"><a href="#src4">4</a></sup> ככל שהקווים <b>צפופים</b> יותר — המדרון <b>תלול</b> יותר.</p>
+      <p class="lead">קו גובה הוא קו דמיוני המחבר נקודות בעלות אותו <b>רום</b> (גובה מעל פני הים).<sup class="ref"><a href="#src8">8</a></sup> במפות ישראל של 1:50,000 ו־1:25,000 <b>פרש הגובה</b> בין שני קווים סמוכים הוא בדרך־כלל <b>10 מטרים</b>, וכל קו חמישי מודגש כ״קו אב״.<sup class="ref"><a href="#src4">4</a></sup> ככל שהקווים <b>צפופים</b> יותר — המדרון <b>תלול</b> יותר.</p>
     </div>
-
     <div class="tool-layout">
       <div class="canvas-wrap">
         <canvas id="contourCanvas" width="560" height="420" aria-label="הדמיית קווי גובה אינטראקטיבית"></canvas>
@@ -90,9 +104,9 @@
       <div class="controls">
         <div class="control-card">
           <h3>🌄 הדמיה: איך גובה הופך לקווי גובה</h3>
-          <p class="small">גררו את מפלס ה״הצפה״ וראו כיצד קווי הגובה נוצרים בכל מפלס. הזיזו את המפלס למעלה ולמטה כדי להבין את הקשר בין הפְּנים־תלת־ממדי של השטח לבין הקווים השטוחים במפה.</p>
+          <p class="small">גררו את מפלס ה״הצפה״ וראו כיצד קווי הגובה נוצרים בכל מפלס — הקשר בין הפְּנים התלת־ממדי של השטח לבין הקווים השטוחים במפה.</p>
           <label class="fld" for="floodSlider">מפלס תצוגה (מטר): <span id="floodVal">—</span></label>
-          <input type="range" id="floodSlider" min="0" max="100" value="50" style="width:100%">
+          <input type="range" id="floodSlider" min="0" max="100" value="50">
           <div class="seg" style="margin-top:12px">
             <button data-feat="all" class="on">כל התבליט</button>
             <button data-feat="peak">פסגה</button>
@@ -104,32 +118,47 @@
         </div>
       </div>
     </div>
-
-    <h3 style="margin-top:28px;color:var(--olive-800)">צורות תבליט שחייבים להכיר</h3>
+    <h3 style="margin-top:28px;color:var(--heading)">צורות תבליט שחייבים להכיר</h3>
     <div class="terms">
       <div class="term"><h4>פסגה / כיפה</h4><p>הנקודה הגבוהה. מופיעה כסדרת קווי גובה סגורים זה בתוך זה. יורדת לכל הכיוונים.<sup class="ref"><a href="#src4">4</a></sup></p></div>
-      <div class="term"><h4>שלוחה (רכס משני)</h4><p>אזור מוגבה מוארך היורד לשלושה כיוונים ועולה לכיוון אחד. קווי הגובה יוצרים ⋀ שקודקודו פונה במורד.<sup class="ref"><a href="#src4">4</a></sup></p></div>
-      <div class="term"><h4>ערוץ / אפיק</h4><p>תוואי ניקוז המים. קווי הגובה יוצרים ⋁ שקודקודו פונה במעלה (הפוך מהשלוחה). ערוצי הזרימה הם עמוד השדרה של המפה.<sup class="ref"><a href="#src4">4</a></sup></p></div>
-      <div class="term"><h4>אוכף</h4><p>נקודה נמוכה בין שתי פסגות סמוכות — שני כיוונים עולים ושניים יורדים. נקודת מעבר נוחה בין אגני ניקוז.<sup class="ref"><a href="#src4">4</a></sup></p></div>
+      <div class="term"><h4>שלוחה (רכס משני)</h4><p>אזור מוגבה מוארך היורד לשלושה כיוונים ועולה לאחד. קווי הגובה יוצרים ⋀ שקודקודו במורד.<sup class="ref"><a href="#src4">4</a></sup></p></div>
+      <div class="term"><h4>ערוץ / אפיק</h4><p>תוואי ניקוז המים. קווי הגובה יוצרים ⋁ שקודקודו במעלה (הפוך מהשלוחה). "עמוד השדרה" של המפה.<sup class="ref"><a href="#src4">4</a></sup></p></div>
+      <div class="term"><h4>אוכף</h4><p>נקודה נמוכה בין שתי פסגות — שני כיוונים עולים ושניים יורדים. מעבר נוח בין אגני ניקוז.<sup class="ref"><a href="#src4">4</a></sup></p></div>
       <div class="term"><h4>קו פרשת מים / קו רכס</h4><p>הקו העובר על הרכסים ומחבר את כל הפסגות והאוכפים; מפריד בין אגני ניקוז.<sup class="ref"><a href="#src4">4</a></sup></p></div>
       <div class="term"><h4>מצוק / צוק</h4><p>שינוי גובה חד ללא מרחק אופקי. מסומן בסמל מיוחד כי קווי הגובה היו נדחסים זה על זה.<sup class="ref"><a href="#src4">4</a></sup></p></div>
     </div>
   </section>
 
-  <!-- ============ 3. INTERACTIVE MAP ============ -->
+  <!-- ============ 3. MATCHING GAME ============ -->
+  <section class="section" id="match">
+    <div class="section-head">
+      <span class="kicker">פעילות אינטראקטיבית</span>
+      <h2><span class="num">3</span>הצלבה: השטח בעין ← השטח במפה</h2>
+      <p class="lead">היכולת החשובה ביותר בקריאת מפה היא לתרגם בין מה שהעין רואה בשטח לבין הצורה שלו על המפה. לחצו על צורת תבליט מימין (מבט תלת־ממדי) ואז על ייצוג קווי־הגובה המתאים משמאל. התאמה נכונה תסומן בירוק.</p>
+    </div>
+    <div class="card">
+      <div class="match-grid">
+        <div class="match-col" id="matchPhotos"><h3>🏔️ הצורה בשטח</h3></div>
+        <div class="match-col" id="matchMaps"><h3>🗺️ הצורה במפה (קווי גובה)</h3></div>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-top:14px;flex-wrap:wrap;gap:10px">
+        <div class="feedback" id="matchFeedback"></div>
+        <button class="btn ghost" id="matchReset" style="color:var(--heading);border-color:var(--khaki)">התחל מחדש ↻</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 4. INTERACTIVE MAP ============ -->
   <section class="section" id="map">
     <div class="section-head">
       <span class="kicker">שלב ג׳</span>
-      <h2><span class="num">3</span>מפה אינטראקטיבית של ארץ ישראל</h2>
-      <p class="lead">לחצו על אזור במפה כדי ללמוד על אופי השטח שלו, האתגרים הניווטיים המאפיינים אותו, ומאפייני התבליט הבולטים. הצללית משורטטת מקו־הגבול האמיתי של ישראל.</p>
+      <h2><span class="num">4</span>מפה אינטראקטיבית של ארץ ישראל</h2>
+      <p class="lead">לחצו על אזור במפה כדי ללמוד על אופי השטח שלו, האתגרים הניווטיים המאפיינים אותו, ומאפייני התבליט הבולטים. הצללית משורטטת מקו־הגבול הגאוגרפי של ישראל.</p>
     </div>
-
     <div class="map-layout">
       <div class="map-frame">
-        <svg id="israel-map" viewBox="0 0 200 540" role="img" aria-label="מפת אזורי ארץ ישראל">
-          <!-- silhouette + regions injected by JS -->
-        </svg>
-        <p class="small" style="text-align:center;margin:6px 0 0">לחצו על סמן אזור · הצללית מבוססת קו־גבול גאוגרפי אמיתי</p>
+        <svg id="israel-map" viewBox="0 0 200 540" role="img" aria-label="מפת אזורי ארץ ישראל"></svg>
+        <p class="cap">לחצו על סמן אזור · הצללית מבוססת קו־גבול גאוגרפי</p>
       </div>
       <div class="region-info" id="regionInfo">
         <div class="placeholder">
@@ -141,18 +170,16 @@
     <p class="small" style="margin-top:14px">התיאורים מבוססים על גאוגרפיה מקובלת של אזורי הארץ ומיועדים להקשר ניווטי כללי.</p>
   </section>
 
-  <!-- ============ 4. GRID REFERENCE TRAINER ============ -->
+  <!-- ============ 5. GRID REFERENCE TRAINER ============ -->
   <section class="section" id="nz">
     <div class="section-head">
       <span class="kicker">כלי עזר דיגיטלי</span>
-      <h2><span class="num">4</span>דקירת נקודת־ציון (נ״צ)</h2>
+      <h2><span class="num">5</span>דקירת נקודת־ציון (נ״צ)</h2>
       <p class="lead">כל מדינת ישראל נמצאת ברביע הצפון־מזרחי של רשת ישראל החדשה (ITM), ולכן <b>כל הקואורדינטות חיוביות</b>. כל אחד משני המספרים בנוי מ־6 ספרות (מטרים מראשית הרשת).<sup class="ref"><a href="#src1">1</a></sup> ב־נ״צ צבאית קוראים <b>קודם את המזרחית ואז את הצפונית</b> — "ימינה ואז למעלה".</p>
     </div>
-
     <div class="note">
       <b>כלל האצבע — "ימין ואז למעלה":</b> קוראים תחילה את קו הרשת האנכי שמשמאל לנקודה (המזרחית), ואז את קו הרשת האופקי שמתחת לנקודה (הצפונית). לכל ציר: שתי הספרות הראשונות = מספר קו הרשת (ק״מ), והספרה השלישית = עשיריות המשבצת (100 מ׳). כך מתקבלת נ״צ בת 6 ספרות ברמת דיוק של 100 מ׳.<sup class="ref"><a href="#src2">2</a></sup>
     </div>
-
     <div class="tool-layout">
       <div class="canvas-wrap">
         <canvas id="gridCanvas" width="520" height="520" aria-label="לוח תרגול דקירת נ״צ"></canvas>
@@ -165,58 +192,51 @@
             <button id="modePlot">דְּקְרוּ נ״צ</button>
           </div>
           <div id="readMode">
-            <p class="small">על הלוח מסומנת נקודה 🔴. קראו את הנ״צ שלה (6 ספרות: מזרחית ואז צפונית) והקלידו:</p>
+            <p class="small">על הלוח מסומנת נקודה 🔴. קראו את הנ״צ שלה (6 ספרות: מזרחית ואז צפונית):</p>
             <div class="row">
-              <div><label class="fld">מזרחית (3 ספרות)</label><input type="text" id="readEast" maxlength="3" inputmode="numeric" placeholder="לדוגמה 234"></div>
-              <div><label class="fld">צפונית (3 ספרות)</label><input type="text" id="readNorth" maxlength="3" inputmode="numeric" placeholder="לדוגמה 671"></div>
+              <div><label class="fld">מזרחית (3 ספרות)</label><input type="text" id="readEast" maxlength="3" inputmode="numeric" placeholder="234"></div>
+              <div><label class="fld">צפונית (3 ספרות)</label><input type="text" id="readNorth" maxlength="3" inputmode="numeric" placeholder="671"></div>
             </div>
             <button class="btn" id="checkRead" style="margin-top:12px;width:100%">בדיקה</button>
           </div>
           <div id="plotMode" class="hidden">
             <p class="small">דִּקְרוּ (לחצו) על הלוח את הנ״צ הבאה:</p>
             <div class="result" style="margin-bottom:8px"><div class="val" id="plotTarget">— —</div><div class="lbl">מזרחית · צפונית</div></div>
-            <p class="small">רמת מעבר: לחיצה במרחק של עד 100 מ׳ (משבצת אחת בעשירית) מהיעד.</p>
+            <p class="small">רמת מעבר: לחיצה במרחק של עד 100 מ׳ מהיעד.</p>
           </div>
           <div class="feedback" id="gridFeedback"></div>
-          <button class="btn ghost" id="newTarget" style="width:100%;color:var(--olive-700);border-color:var(--khaki)">נקודה חדשה ↻</button>
+          <button class="btn ghost" id="newTarget" style="width:100%;color:var(--heading);border-color:var(--khaki)">נקודה חדשה ↻</button>
         </div>
         <div class="control-card">
           <h3 style="font-size:1rem">💡 טיפ</h3>
-          <p class="small">בשטח משתמשים ב<b>מד־קואורדינטות</b> (סרגל שקוף עם חלוקת המשבצת ל־10) כדי להעריך את העשיריות בדיוק. כאן — אמדו בעין את מיקום הנקודה בתוך המשבצת.</p>
+          <p class="small">בשטח משתמשים ב<b>מד־קואורדינטות</b> (סרגל שקוף עם חלוקת המשבצת ל־10) כדי להעריך את העשיריות. כאן — אמדו בעין את מיקום הנקודה בתוך המשבצת.</p>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- ============ 5. AZIMUTH CALCULATOR ============ -->
+  <!-- ============ 6. AZIMUTH CALCULATOR ============ -->
   <section class="section" id="azimuth">
     <div class="section-head">
       <span class="kicker">כלי עזר דיגיטלי</span>
-      <h2><span class="num">5</span>מחשבון אזימוט, מרחק ואזימוט חוזר</h2>
-      <p class="lead">אזימוט הוא זווית אופקית הנמדדת <b>עם כיוון השעון מקו הצפון</b> (0°–360°).<sup class="ref"><a href="#src6">6</a></sup> האזימוט נמדד מהנווט אל המטרה ("איך אני רואה את המטרה"), והאזימוט החוזר — מהמטרה אל הנווט ("איך המטרה רואה אותי"). הזינו שתי נקודות־ציון (בקואורדינטות מלאות במטרים) והכלי יחשב.</p>
+      <h2><span class="num">6</span>מחשבון אזימוט, מרחק ואזימוט חוזר</h2>
+      <p class="lead">אזימוט הוא זווית אופקית הנמדדת <b>עם כיוון השעון מקו הצפון</b> (0°–360°).<sup class="ref"><a href="#src6">6</a></sup> האזימוט נמדד מהנווט אל המטרה, והאזימוט החוזר — מהמטרה אל הנווט. הזינו שתי נקודות־ציון (בקואורדינטות מלאות במטרים).</p>
     </div>
-
     <div class="tool-layout">
-      <div class="controls" style="grid-column:1;">
+      <div class="controls" style="grid-column:1">
         <div class="control-card">
           <h3>🧭 נקודות</h3>
           <label class="fld">נקודה A — מוצא</label>
-          <div class="row">
-            <div><input type="number" id="ax" placeholder="מזרחית (מ׳)" value="222286"></div>
-            <div><input type="number" id="ay" placeholder="צפונית (מ׳)" value="631556"></div>
-          </div>
+          <div class="row"><div><input type="number" id="ax" placeholder="מזרחית" value="222286"></div><div><input type="number" id="ay" placeholder="צפונית" value="631556"></div></div>
           <label class="fld">נקודה B — יעד</label>
-          <div class="row">
-            <div><input type="number" id="bx" placeholder="מזרחית (מ׳)" value="209000"></div>
-            <div><input type="number" id="by" placeholder="צפונית (מ׳)" value="745000"></div>
-          </div>
+          <div class="row"><div><input type="number" id="bx" placeholder="מזרחית" value="209000"></div><div><input type="number" id="by" placeholder="צפונית" value="745000"></div></div>
           <label class="fld">סטייה מגנטית (מעלות, מזרחה) — <span id="decShow">4.9</span>°</label>
-          <input type="range" id="decl" min="3" max="7" step="0.1" value="4.9" style="width:100%">
+          <input type="range" id="decl" min="3" max="7" step="0.1" value="4.9">
           <button class="btn" id="calcAz" style="margin-top:14px;width:100%">חשב</button>
-          <p class="small" style="margin-top:8px">ברירת המחדל: נ״צ A = הכותל (222286, 631556).<sup class="ref"><a href="#src3">3</a></sup></p>
+          <p class="small" style="margin-top:8px">ברירת מחדל: נ״צ A = הכותל (222286, 631556).<sup class="ref"><a href="#src3">3</a></sup></p>
         </div>
       </div>
-      <div class="controls" style="grid-column:2;">
+      <div class="controls" style="grid-column:2">
         <div class="control-card">
           <h3>📊 תוצאה</h3>
           <div class="result-grid">
@@ -225,7 +245,7 @@
             <div class="result"><div class="val" id="rMag">—</div><div class="lbl">אזימוט מגנטי (מצפן)</div></div>
             <div class="result"><div class="val" id="rBack">—</div><div class="lbl">אזימוט חוזר (רשת)</div></div>
           </div>
-          <div class="note" style="margin-bottom:0;margin-top:14px">
+          <div class="note" style="margin:14px 0 0">
             <b>מרשת למצפן:</b> הצפון המגנטי בישראל מזרחית לצפון הרשת, לכן <b>מפחיתים</b> את הסטייה מהאזימוט שנמדד במפה כדי לקבל את כיוון המצפן.<sup class="ref"><a href="#src7">7</a></sup> אזימוט חוזר = אזימוט ± 180°.<sup class="ref"><a href="#src6">6</a></sup>
           </div>
         </div>
@@ -233,11 +253,11 @@
     </div>
   </section>
 
-  <!-- ============ 6. THREE NORTHS ============ -->
+  <!-- ============ 7. THREE NORTHS ============ -->
   <section class="section" id="norths">
     <div class="section-head">
       <span class="kicker">תיאוריה חשובה</span>
-      <h2><span class="num">6</span>שלושת הצפונים והסטייה המגנטית</h2>
+      <h2><span class="num">7</span>שלושת הצפונים והסטייה המגנטית</h2>
     </div>
     <div class="map-layout">
       <div class="card">
@@ -246,24 +266,72 @@
       <div>
         <div class="terms" style="grid-template-columns:1fr">
           <div class="term"><h4>צפון אמיתי (גאוגרפי) ⭐</h4><p>הכיוון אל ציר הסיבוב של כדור הארץ (הקוטב הצפוני). קווי האורך מתכנסים אליו.<sup class="ref"><a href="#src11">11</a></sup></p></div>
-          <div class="term"><h4>צפון רשת 🔲</h4><p>כיוון קווי הרשת האנכיים במפה. בשל יישור כדור הארץ למישור המפה יש סטייה קטנה (מעלות בודדות) בינו לצפון האמיתי.<sup class="ref"><a href="#src11">11</a></sup></p></div>
-          <div class="term"><h4>צפון מגנטי 🧲</h4><p>הכיוון שאליו מצביע מחט המצפן. בישראל הוא <b>מזרחית</b> לצפון הגאוגרפי בכ־<b>4.9°–5°</b> (נכון לשנים האחרונות), וערך זה משתנה לאט עם הזמן.<sup class="ref"><a href="#src11">11</a></sup></p></div>
+          <div class="term"><h4>צפון רשת 🔲</h4><p>כיוון קווי הרשת האנכיים במפה. בשל יישור כדור הארץ למישור המפה יש סטייה קטנה (מעלות בודדות) מהצפון האמיתי.<sup class="ref"><a href="#src11">11</a></sup></p></div>
+          <div class="term"><h4>צפון מגנטי 🧲</h4><p>הכיוון שאליו מצביע מחט המצפן. בישראל הוא <b>מזרחית</b> לצפון הגאוגרפי בכ־<b>4.9°–5°</b>, וערך זה משתנה לאט עם הזמן.<sup class="ref"><a href="#src11">11</a></sup></p></div>
         </div>
         <div class="note warn">
-          <b>הכלל המעשי לשטח:</b> מהאזימוט שנמדד במפה (רשת) מורידים כ־4°–5° כדי לקבל את האזימוט למצפן בשטח. מכיוון שהסטייה משתנה עם הזמן — תמיד יש להיצמד לערך המעודכן המופיע בשולי המפה או במקור רשמי (מפ״י).<sup class="ref"><a href="#src7">7</a></sup>
+          <b>הכלל המעשי לשטח:</b> מהאזימוט שנמדד במפה (רשת) מורידים כ־4°–5° כדי לקבל את האזימוט למצפן. מכיוון שהסטייה משתנה — תמיד להיצמד לערך המעודכן בשולי המפה או במקור רשמי (מפ״י).<sup class="ref"><a href="#src7">7</a></sup>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- ============ 7. CREATIVE: ROUTE PLANNER ============ -->
-  <section class="section" id="planner">
+  <!-- ============ 8. BUILDING A NAVIGATION ROUTE ============ -->
+  <section class="section" id="route">
     <div class="section-head">
-      <span class="kicker">פעילות יצירתית</span>
-      <h2><span class="num">7</span>סדנה: תכננו ציר ניווט ובנו כרטיס ניווט</h2>
-      <p class="lead">כאן אתם המתכננים. לחצו על הלוח כדי להניח <b>נקודות ביקורת</b> לאורך ציר, והכלי יבנה עבורכם <b>כרטיס ניווט</b> מלא — לכל "רגל" (מקטע בין שתי נקודות) יחושבו האזימוט (רשת ומגנטי), המרחק ואומדן הצעדים. זהו בדיוק התוצר שצוער בונה לפני יציאה לניווט.</p>
+      <span class="kicker">מבוסס מנחה 011</span>
+      <h2><span class="num">8</span>איך בונים ציר ניווט?</h2>
+      <p class="lead">בניית ציר ניווט אינה רק "לחבר נקודות". על פי <b>מנחה 011 של צה״ל — הוראות בטיחות לניווטים</b>, לציר יש רכיבים מוגדרים, כללי בטיחות למיקום הנקודות, וחישוב זמן וקצב. כך בונים ציר, שלב אחר שלב.<sup class="ref"><a href="#src13">13</a></sup></p>
     </div>
 
+    <h3 style="color:var(--heading);margin-top:0">רכיבי הציר — שלבי הניווט</h3>
+    <div class="steps">
+      <div class="step"><div class="n">1</div><div><h4>נקודת התחלה (נ.ה) <span class="chip">START</span></h4><p>נקודת המוצא של הניווט, שממנה יוצאים המנווטים.<sup class="ref"><a href="#src13">13</a></sup></p></div></div>
+      <div class="step"><div class="n">2</div><div><h4>נקודות ציון ותיאורי נקודות (נ.צ)</h4><p>הנקודות אליהן מגיעים המנווטים לאורך הציר. לכל נקודה מצרפים <b>תיאור מילולי</b> של השטח סביבה, כדי שהמנווט ידע לזהות שהגיע.<sup class="ref"><a href="#src13">13</a></sup></p></div></div>
+      <div class="step"><div class="n">3</div><div><h4>מעבר חובה (מ.ח) <span class="chip">CHECKPOINT</span></h4><p>נקודת דרך מוגדרת ש<b>כל</b> המנווטים חייבים לעבור בה — כלי לניתוב הכוח ולריכוזו בציר.<sup class="ref"><a href="#src13">13</a></sup></p></div></div>
+      <div class="step"><div class="n">4</div><div><h4>נקודת בקרה (נ.ב) <span class="chip">CONTROL</span></h4><p>נקודה על ציר הניווט המבוקרת פיזית ע״י החפ״ק. בציר רגלי <b>שאורכו 10 ק״מ ומעלה — חובה לפחות נ.ב אחת</b> שכל המנווטים עוברים דרכה (למשל לנקודת מים/מזון).<sup class="ref"><a href="#src13">13</a></sup></p></div></div>
+      <div class="step"><div class="n">5</div><div><h4>חציות כבישים ומכשולים</h4><p>מתכננים מראש היכן חוצים כביש (בנקודה מוגדרת, מאושרת ומסומנת) ומסמנים מכשולים לאורך הציר.<sup class="ref"><a href="#src13">13</a></sup></p></div></div>
+      <div class="step"><div class="n">6</div><div><h4>נקודת סוף (נ.ס) <span class="chip">END</span></h4><p>נקודת סיום הניווט, שאליה מתכנסים המנווטים.<sup class="ref"><a href="#src13">13</a></sup></p></div></div>
+    </div>
+
+    <h3 style="color:var(--heading);margin-top:26px">כללי בטיחות למיקום הנקודות</h3>
+    <div class="grid-2">
+      <div class="card">
+        <ul class="tight">
+          <li><b>מרחק ממכשולים:</b> אין לקבוע נ״צ, נ.ה, מ.ח, נ.ב או נ.ס על יד בארות, בורות ומכשולים פתוחים — אלא <b>במרחק של 200 מ׳ לפחות</b> מהם, תוך ציון המכשול בתדריך.<sup class="ref"><a href="#src13">13</a></sup></li>
+          <li><b>מרחק ממטרות/יעדי אש:</b> נקודות הציון והצירים ימוקמו <b>200 מ׳ לפחות</b> מאזורי היעדים או המטרות הידועים.<sup class="ref"><a href="#src13">13</a></sup></li>
+          <li><b>כבישים:</b> ניווט אינו על ציר הכביש עצמו; בקרבת מסילת רכבת — במרחק <b>50 מ׳ לפחות</b>, ואין לקבוע נקודות במרחק <b>100 מ׳</b> ממסילה.<sup class="ref"><a href="#src13">13</a></sup></li>
+        </ul>
+      </div>
+      <div class="card">
+        <ul class="tight">
+          <li><b>נחלים זורמים:</b> חציית נחל זורם רק בגשר עילי/תחתי — לא כאשר קיים <b>ספי שיטפונות</b>.<sup class="ref"><a href="#src13">13</a></sup></li>
+          <li><b>שמירת ערכי טבע:</b> אין לסמן קודים על עצים בשמורות טבע או על מבנים עתיקים; מסמנים ביתדות/בזנטים בצידי הדרך.<sup class="ref"><a href="#src13">13</a></sup></li>
+          <li><b>מכשולים לזיהוי:</b> שדות מוקשים, בורות, מערות, מצוקים, קווי מתח, תעלות ובריכות מים — יאותרו, יסומנו וייכתבו בתדריך.<sup class="ref"><a href="#src13">13</a></sup></li>
+        </ul>
+      </div>
+    </div>
+
+    <h3 style="color:var(--heading);margin-top:26px">חישוב זמן וקצב הליכה</h3>
+    <div class="note">
+      קצב ההליכה לחישוב <b>"שעת גג"</b> (שעת סיום מתוכננת) תלוי במשקל הנישא:<sup class="ref"><a href="#src13">13</a></sup>
+      <ul class="tight" style="margin-top:6px">
+        <li>עד 40% ממשקל הגוף: <b>2.5 קמ״ש בלילה · 4 קמ״ש ביום</b>.</li>
+        <li>מעל 40% ממשקל הגוף: <b>2 קמ״ש בלילה · 3.5 קמ״ש ביום</b>.</li>
+        <li>ניווט לילה מתבצע <b>רק לאחר ניווט יום מוצלח</b> (3 ק״מ).</li>
+      </ul>
+      דוגמה מהמנחה: ציר 15 ק״מ בעומס חום מתון ≈ 6 שעות; בקצב זה יש לתכנן החזר נוזלים ≈ 1,000 מ״ל לשעה ← כ־6 ליטר מים, שממחיש מדוע קובעים נ.ב למים.
+    </div>
+    <p class="small">התוכן בסעיף זה מתומצת מ<b>מנחה 011</b> ומתבנית "תיק ניווט" שבו; הוא לימודי בלבד ואינו תחליף למנחה המלא, לנהלים ולאישור מפקד.</p>
+  </section>
+
+  <!-- ============ 9. ROUTE PLANNER ============ -->
+  <section class="section" id="planner">
+    <div class="section-head">
+      <span class="kicker">סדנה יצירתית</span>
+      <h2><span class="num">9</span>סדנה: תכננו ציר ניווט ובנו כרטיס ניווט</h2>
+      <p class="lead">עכשיו אתם המתכננים. בחרו סוג נקודה (נ.ה / נ.צ / מ.ח / נ.ב / נ.ס) ולחצו על הלוח כדי להניחה. הכלי בונה עבורכם <b>כרטיס ניווט</b> מלא — לכל "רגל" יחושבו האזימוט (רשת ומגנטי), המרחק ואומדן הצעדים. בדיוק כמו התוצר שצוער בונה לפני ניווט.</p>
+    </div>
     <div class="tool-layout">
       <div class="canvas-wrap">
         <canvas id="plannerCanvas" width="560" height="520" aria-label="לוח תכנון ציר ניווט"></canvas>
@@ -271,66 +339,86 @@
       <div class="controls">
         <div class="control-card">
           <h3>🧭 בקרת תכנון</h3>
-          <label class="fld">שם הנקודה הבאה (רשות)</label>
+          <label class="fld">סוג הנקודה הבאה</label>
+          <div class="seg" id="wpTypeSeg">
+            <button data-type="נ.ה" class="on">נ.ה</button>
+            <button data-type="נ.צ">נ.צ</button>
+            <button data-type="מ.ח">מ.ח</button>
+            <button data-type="נ.ב">נ.ב</button>
+            <button data-type="נ.ס">נ.ס</button>
+          </div>
+          <label class="fld">שם/תיאור (רשות)</label>
           <input type="text" id="wpName" placeholder="לדוגמה: אוכף, בית בודד, צומת שבילים">
           <label class="fld">אורך צעד ממוצע (ס״מ) — <span id="strideShow">75</span></label>
-          <input type="range" id="stride" min="60" max="90" value="75" style="width:100%">
+          <input type="range" id="stride" min="60" max="90" value="75">
           <div class="row" style="margin-top:12px">
             <button class="btn" id="undoWp" style="background:var(--khaki)">בטל אחרונה ↶</button>
             <button class="btn ghost" id="clearWp" style="color:var(--danger);border-color:var(--danger)">נקה הכול</button>
           </div>
-          <p class="small" style="margin-top:8px">כל משבצת = 1 ק״מ. לחצו על הלוח להוספת נקודת ביקורת.</p>
+          <p class="small" style="margin-top:8px">כל משבצת = 1 ק״מ. לחצו על הלוח להוספת נקודה.</p>
         </div>
         <div class="control-card">
           <h3 style="font-size:1rem">📋 סטטיסטיקה</h3>
           <div class="result-grid">
-            <div class="result"><div class="val" id="totWp">0</div><div class="lbl">נקודות ביקורת</div></div>
+            <div class="result"><div class="val" id="totWp">0</div><div class="lbl">נקודות</div></div>
             <div class="result"><div class="val" id="totDist">0</div><div class="lbl">אורך ציר כולל</div></div>
           </div>
         </div>
       </div>
     </div>
-
-    <div class="card" style="margin-top:20px;overflow-x:auto">
-      <h3 style="margin-top:0;color:var(--olive-800)">כרטיס ניווט</h3>
-      <table class="navcard" id="navCard">
-        <thead>
-          <tr><th>רגל</th><th>מ־ ← אל</th><th>נ״צ יעד</th><th>אזימוט רשת</th><th>אזימוט מגנטי</th><th>מרחק</th><th>אומדן צעדים</th></tr>
-        </thead>
-        <tbody><tr><td colspan="7" class="small" style="text-align:center;color:var(--ink-soft)">הניחו לפחות שתי נקודות ביקורת כדי לייצר כרטיס ניווט…</td></tr></tbody>
-      </table>
+    <div class="card" style="margin-top:20px">
+      <h3 style="margin-top:0;color:var(--heading)">כרטיס ניווט</h3>
+      <div class="table-scroll">
+        <table class="navcard" id="navCard">
+          <thead>
+            <tr><th>רגל</th><th>מ־ ← אל</th><th>סוג</th><th>נ״צ יעד</th><th>אזימוט רשת</th><th>אזימוט מגנטי</th><th>מרחק</th><th>אומדן צעדים</th></tr>
+          </thead>
+          <tbody><tr><td colspan="8" class="small" style="text-align:center;color:var(--text-soft)">הניחו לפחות שתי נקודות כדי לייצר כרטיס ניווט…</td></tr></tbody>
+        </table>
+      </div>
       <button class="btn" id="printCard" style="margin-top:14px">🖨️ הדפס / שמור כרטיס (PDF)</button>
     </div>
+  </section>
+
+  <!-- ============ 10. QUIZ ============ -->
+  <section class="section" id="quiz">
+    <div class="section-head">
+      <span class="kicker">מבחן עצמי</span>
+      <h2><span class="num">10</span>בוחן: קריאת מפה, ניווט ובטיחות</h2>
+      <p class="lead">במנחה 011 נדרש כל מנווט לעבור <b>מבחן בטיחות בנושא "ניווטים" בציון 85 לפחות</b> לפני ביצוע ניווט.<sup class="ref"><a href="#src13">13</a></sup> בדקו את עצמכם — הבוחן משלב שאלות מכל פרקי האתר. לכל שאלה מוצג הסבר עם המקור.</p>
+    </div>
+    <div class="quiz-card" id="quizCard"></div>
   </section>
 
   <!-- ============ SOURCES ============ -->
   <section class="section" id="sources">
     <div class="section-head">
       <span class="kicker">אימות</span>
-      <h2><span class="num">8</span>מקורות</h2>
-      <p class="lead">כל הנתונים באתר אומתו במספר מקורות. להלן הרשימה המלאה עם קישורים ישירים.</p>
+      <h2><span class="num">11</span>מקורות</h2>
+      <p class="lead">כל הנתונים אומתו במספר מקורות. להלן הרשימה המלאה עם קישורים ישירים.</p>
     </div>
     <ul class="src-list">
-      <li id="src1"><span class="tag">[1] רשת ישראל החדשה</span> — ויקיפדיה: מבנה רשת ITM, רביע צפון־מזרחי, קואורדינטות בנות 6 ספרות. <a href="https://he.wikipedia.org/wiki/רשת_ישראל_החדשה" target="_blank" rel="noopener">he.wikipedia.org/wiki/רשת_ישראל_החדשה</a></li>
-      <li id="src2"><span class="tag">[2] נקודת ציון</span> — ויקיפדיה: הגדרת נ״צ, מזרחית/צפונית, מבנה המספרים. <a href="https://he.wikipedia.org/wiki/נקודת_ציון" target="_blank" rel="noopener">he.wikipedia.org/wiki/נקודת_ציון</a></li>
-      <li id="src3"><span class="tag">[3] Israeli Transverse Mercator</span> — Wikipedia: מערכת ההיטל, קריאת קואורדינטות, נ״צ הכותל (222286, 631556). <a href="https://en.wikipedia.org/wiki/Israeli_Transverse_Mercator" target="_blank" rel="noopener">en.wikipedia.org/wiki/Israeli_Transverse_Mercator</a></li>
+      <li id="src1"><span class="tag">[1] רשת ישראל החדשה</span> — ויקיפדיה: מבנה רשת ITM, רביע צפון־מזרחי, 6 ספרות. <a href="https://he.wikipedia.org/wiki/רשת_ישראל_החדשה" target="_blank" rel="noopener">he.wikipedia.org — רשת ישראל החדשה</a></li>
+      <li id="src2"><span class="tag">[2] נקודת ציון</span> — ויקיפדיה: הגדרת נ״צ, מזרחית/צפונית, מבנה המספרים. <a href="https://he.wikipedia.org/wiki/נקודת_ציון" target="_blank" rel="noopener">he.wikipedia.org — נקודת ציון</a></li>
+      <li id="src3"><span class="tag">[3] Israeli Transverse Mercator</span> — Wikipedia: מערכת ההיטל, נ״צ הכותל (222286, 631556). <a href="https://en.wikipedia.org/wiki/Israeli_Transverse_Mercator" target="_blank" rel="noopener">en.wikipedia.org — ITM</a></li>
       <li id="src4"><span class="tag">[4] Navigo — קריאת מפה טופוגרפית</span>: קווי גובה, פרש גובה, צורות תבליט, קנה מידה. <a href="https://navigo.co.il/תבניות-טופוגרפיות/" target="_blank" rel="noopener">navigo.co.il — תבניות טופוגרפיות</a></li>
       <li id="src5"><span class="tag">[5] לוינסקי־וינגייט — מבוא לניווט וקריאת מפה</span>: הגדרת המפה, קנה מידה, מקרא וצבעים, מדידת מרחק. <a href="https://www.l-w.ac.il/4x4-articles/introduction-to-navigation-and-map-reading-lesson-1/" target="_blank" rel="noopener">l-w.ac.il — שיעור א׳</a></li>
-      <li id="src6"><span class="tag">[6] FM 3-25.26 Map Reading and Land Navigation</span> — US Army: הגדרת אזימוט, אזימוט חוזר (±180°), כיוונים. <a href="https://550cord.com/land-navigation-training-fm-3-25-26/map-reading-land-navigation-ch6/" target="_blank" rel="noopener">550cord.com — Direction (FM 3-25.26)</a></li>
-      <li id="src7"><span class="tag">[7] המרכז למיפוי ישראל (מפ״י)</span> — מידע על הצפון והסטייה המגנטית (מקור רשמי). <a href="https://www.mapi.gov.il/Research/magnetometry/Pages/north_information.aspx" target="_blank" rel="noopener">mapi.gov.il — מידע על הצפון</a></li>
-      <li id="src8"><span class="tag">[8] קו גובה</span> — ויקיפדיה: הגדרת קו גובה כמחבר נקודות בעלות רום זהה. <a href="https://he.wikipedia.org/wiki/קו_גובה" target="_blank" rel="noopener">he.wikipedia.org/wiki/קו_גובה</a></li>
-      <li id="src9"><span class="tag">[9] מפה טופוגרפית</span> — ויקיפדיה: מאפייני המפה הטופוגרפית. <a href="https://he.wikipedia.org/wiki/מפה_טופוגרפית" target="_blank" rel="noopener">he.wikipedia.org/wiki/מפה_טופוגרפית</a></li>
-      <li id="src10"><span class="tag">[10] 4X4 — טופוגרפיה ותבליט</span>: כתבת ניווט מס׳ 4, צורות תבליט וקריאתן. <a href="https://www.4x4.co.il/article/2640" target="_blank" rel="noopener">4x4.co.il/article/2640</a></li>
+      <li id="src6"><span class="tag">[6] FM 3-25.26 Map Reading and Land Navigation</span> — US Army: אזימוט, אזימוט חוזר (±180°). <a href="https://550cord.com/land-navigation-training-fm-3-25-26/map-reading-land-navigation-ch6/" target="_blank" rel="noopener">550cord.com — Direction</a></li>
+      <li id="src7"><span class="tag">[7] המרכז למיפוי ישראל (מפ״י)</span> — מידע על הצפון והסטייה המגנטית. <a href="https://www.mapi.gov.il/Research/magnetometry/Pages/north_information.aspx" target="_blank" rel="noopener">mapi.gov.il — מידע על הצפון</a></li>
+      <li id="src8"><span class="tag">[8] קו גובה</span> — ויקיפדיה: קו המחבר נקודות בעלות רום זהה. <a href="https://he.wikipedia.org/wiki/קו_גובה" target="_blank" rel="noopener">he.wikipedia.org — קו גובה</a></li>
+      <li id="src9"><span class="tag">[9] מפה טופוגרפית</span> — ויקיפדיה. <a href="https://he.wikipedia.org/wiki/מפה_טופוגרפית" target="_blank" rel="noopener">he.wikipedia.org — מפה טופוגרפית</a></li>
+      <li id="src10"><span class="tag">[10] 4X4 — טופוגרפיה ותבליט</span>: צורות תבליט וקריאתן. <a href="https://www.4x4.co.il/article/2640" target="_blank" rel="noopener">4x4.co.il/article/2640</a></li>
       <li id="src11"><span class="tag">[11] "מי הזיז את הצפון שלי"</span> — הבסיס (hbasade): שלושת הצפונים והסטייה בישראל. <a href="https://www.hbasade.com/post/מי-הזיז-את-הצ-פו-ן-שלי" target="_blank" rel="noopener">hbasade.com — שלושת הצפונים</a></li>
-      <li id="src12"><span class="tag">[12] EPSG:2039</span> — Israel 1993 / Israeli TM Grid: הגדרת מערכת הייחוס הרשמית. <a href="https://epsg.io/2039" target="_blank" rel="noopener">epsg.io/2039</a></li>
+      <li id="src12"><span class="tag">[12] EPSG:2039</span> — Israel 1993 / Israeli TM Grid. <a href="https://epsg.io/2039" target="_blank" rel="noopener">epsg.io/2039</a></li>
+      <li id="src13"><span class="tag">[13] מנחה 011 — הוראות בטיחות לניווטים ומנחה להכנה וביצוע ניווטים</span>: מפקדת קצין חיל הרגלים והצנחנים הראשי, צה״ל, מרץ 2025. הבסיס לסעיף "בניית ציר ניווט", לתבנית תיק הניווט ולבוחן הבטיחות. <em>(מסמך רשמי שנמסר; אינו מפורסם בקישור ציבורי.)</em></li>
     </ul>
   </section>
 
 </main>
 
 <footer class="site-footer">
-  <p>נבנה ככלי לימוד לצוערים בעולם קריאת המפה והניווט · התוכן מבוסס על המקורות המצוינים לעיל.</p>
-  <p class="small">אתר לימודי — אין להסתמך עליו כמקור בטיחותי יחיד בשטח. בשטח יש לפעול לפי הנהלים, המפה המעודכנת וההוראות של המפקדים.</p>
+  <p><b>הניווטיה</b> · כלי לימוד לצוערים בעולם קריאת המפה והניווט · התוכן מבוסס על מנחה 011 ועל המקורות המצוינים לעיל.</p>
+  <p class="small">אתר לימודי — אין להסתמך עליו כמקור בטיחותי יחיד בשטח. בשטח יש לפעול לפי הנהלים, המפה המעודכנת, מנחה 011 והוראות המפקדים.</p>
 </footer>
 
 <script src="js/app.js"></script>
