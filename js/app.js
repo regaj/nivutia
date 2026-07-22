@@ -522,14 +522,20 @@ const gridTrainer = (() => {
     updateCard();
   }
 
+  const DIR8 = ['צפון', 'צפון־מזרח', 'מזרח', 'דרום־מזרח', 'דרום', 'דרום־מערב', 'מערב', 'צפון־מערב'];
+  const dirName = az => DIR8[Math.round(norm360(az) / 45) % 8];
+
   function updateCard() {
     const tbody = document.querySelector('#navCard tbody');
+    const skelWrap = document.getElementById('storySkeleton');
+    const skelBody = document.getElementById('storySkelBody');
     const stride = +strideEl.value / 100; // מ׳
     let total = 0;
     if (wps.length < 2) {
       tbody.innerHTML = '<tr><td colspan="8" class="small" style="text-align:center;color:var(--text-soft)">הניחו לפחות שתי נקודות כדי לייצר כרטיס ניווט…</td></tr>';
+      if (skelWrap) skelWrap.classList.add('hidden');
     } else {
-      let html = '';
+      let html = '', skelHtml = '';
       for (let i = 0; i < wps.length - 1; i++) {
         const a = wps[i], b = wps[i + 1];
         const de = (b.x - a.x) / px, dn = -(b.y - a.y) / px; // ק״מ
@@ -550,8 +556,13 @@ const gridTrainer = (() => {
           <td>${fmtDist(distM)}</td>
           <td>${steps.toLocaleString('he-IL')}</td>
         </tr>`;
+        skelHtml += `<div class="leg-story"><b>רגל ${i + 1}:</b> יוצאים מ<b>${from}</b> ב${dirName(gridAz)} (אזימוט מגנטי ${magAz.toFixed(0)}°), מתקדמים <b>${fmtDist(distM)}</b> (כ־${steps.toLocaleString('he-IL')} צעדים).
+          בדרך אזהה: <span class="blank">מה רואים בדרך?</span> ·
+          קו עצירה: <span class="blank">מה מעבר לנקודה?</span> ·
+          בנקודה — <b>${to}</b>: <span class="blank">איך מזהים אותה?</span></div>`;
       }
       tbody.innerHTML = html;
+      if (skelWrap && skelBody) { skelWrap.classList.remove('hidden'); skelBody.innerHTML = skelHtml; }
     }
     document.getElementById('totWp').textContent = wps.length;
     document.getElementById('totDist').textContent = total ? fmtDist(total) : '0';
@@ -575,21 +586,201 @@ const gridTrainer = (() => {
   document.getElementById('printCard').addEventListener('click', () => {
     if (wps.length < 2) { alert('הניחו לפחות שתי נקודות ביקורת לפני ההדפסה.'); return; }
     const rows = document.querySelector('#navCard tbody').innerHTML;
+    const skel = document.getElementById('storySkelBody');
+    const skelHtml = skel && skel.innerHTML.trim() ? `<h2>שלד סיפור דרך</h2>${skel.innerHTML}` : '';
     const win = window.open('', '_blank');
     win.document.write(`<!DOCTYPE html><html dir="rtl" lang="he"><head><meta charset="utf-8"><title>כרטיס ניווט</title>
-      <style>body{font-family:Arial,sans-serif;padding:24px}h1{color:#33421f}
+      <style>body{font-family:Arial,sans-serif;padding:24px}h1,h2{color:#33421f}
       table{width:100%;border-collapse:collapse;margin-top:12px}th,td{border:1px solid #999;padding:8px;text-align:center}
-      th{background:#33421f;color:#fff}.meta{color:#555;font-size:14px}</style></head><body>
+      th{background:#33421f;color:#fff}.meta{color:#555;font-size:14px}
+      .leg-story{border:1px solid #bbb;border-right:4px solid #7d8c4e;border-radius:6px;padding:9px 12px;margin:8px 0;line-height:1.8}
+      .blank{display:inline-block;min-width:130px;border-bottom:2px dotted #a9743a;color:#a9743a;font-size:0.85em;text-align:center;padding:0 6px}</style></head><body>
       <h1>כרטיס ניווט</h1>
       <p class="meta">סטייה מגנטית בשימוש: ${DECL}° · אורך צעד: ${strideEl.value} ס״מ · מספר צלעות: ${wps.length - 1}</p>
       <table><thead><tr><th>רגל</th><th>מ־ ← אל</th><th>סוג</th><th>נ״צ יעד</th><th>אזימוט רשת</th><th>אזימוט מגנטי</th><th>מרחק</th><th>אומדן צעדים</th></tr></thead>
       <tbody>${rows}</tbody></table>
-      <p class="meta">הופק באתר "ניווט וקריאת מפה". לאימות תמיד השוו למפה המעודכנת ולנהלים.</p>
+      ${skelHtml}
+      <p class="meta">הופק באתר "הניווטיה". לאימות תמיד השוו למפה המעודכנת ולנהלים.</p>
       </body></html>`);
     win.document.close(); win.focus(); setTimeout(() => win.print(), 300);
   });
 
   draw();
+})();
+
+/* =======================================================================
+   6ב. סיפור דרך — מפה + משחק סידור המשפטים
+   ======================================================================= */
+(() => {
+  const cv = document.getElementById('storyCanvas');
+  if (!cv) return;
+  const ctx = cv.getContext('2d');
+  const W = cv.width, H = cv.height;
+  const INTERVAL = 10;
+
+  /* --- תבליט: שתי גבעות, אוכף, ערוץ היורד לדרך עפר --- */
+  const gauss = (u, v, cu, cv2, su, sv) => Math.exp(-(((u - cu) ** 2) / (2 * su * su) + ((v - cv2) ** 2) / (2 * sv * sv)));
+  function dSeg(px, py, ax, ay, bx, by) {
+    const dx = bx - ax, dy = by - ay; const l2 = dx * dx + dy * dy;
+    let t = l2 ? ((px - ax) * dx + (py - ay) * dy) / l2 : 0; t = Math.max(0, Math.min(1, t));
+    return Math.hypot(px - (ax + t * dx), py - (ay + t * dy));
+  }
+  // ציר הערוץ (u,v): מראש הערוץ מתחת לאוכף אל צומת דרך העפר
+  const CH = [[0.52, 0.42], [0.60, 0.58], [0.70, 0.74], [0.76, 0.84]];
+  function chDist(u, v) {
+    let m = Infinity;
+    for (let i = 0; i < CH.length - 1; i++) m = Math.min(m, dSeg(u, v, CH[i][0], CH[i][1], CH[i + 1][0], CH[i + 1][1]));
+    return m;
+  }
+  function heightAt(u, v) {
+    let h = 18;
+    h += 72 * gauss(u, v, 0.22, 0.40, 0.15, 0.17);   // פסגה מערבית (נ.ה)
+    h += 58 * gauss(u, v, 0.72, 0.24, 0.20, 0.13);   // רכס צפון־מזרחי
+    const d = chDist(u, v);
+    h -= 34 * Math.exp(-(d * d) / (2 * 0.055 * 0.055)); // חריצת הערוץ
+    h -= 14 * Math.max(0, (v - 0.62) / 0.38);           // הנמכה כללית דרומה אל הדרך
+    return Math.max(0, h);
+  }
+
+  const P = (u, v) => [u * W, v * H];
+  // נקודות עלילה
+  const START = P(0.22, 0.40);       // נ.ה — פסגה מערבית
+  const SADDLE = P(0.47, 0.335);     // האוכף
+  const CHHEAD = P(0.52, 0.42);      // ראש הערוץ
+  const JUNCTION = P(0.76, 0.84);    // מפגש ערוץ×דרך (קו עצירה + נקודת תקיפה)
+  const WATER = P(0.90, 0.845);      // בור המים — הנקודה
+  const ROAD_Y = 0.845;              // דרך העפר (אופקית)
+
+  function haloText(txt, x, y, size = 12, color = '#22271c', weight = 700) {
+    ctx.font = `${weight} ${size}px Heebo, sans-serif`; ctx.textAlign = 'center';
+    ctx.lineWidth = 3.5; ctx.strokeStyle = 'rgba(255,255,255,0.85)';
+    ctx.strokeText(txt, x, y); ctx.fillStyle = color; ctx.fillText(txt, x, y);
+  }
+
+  let base = null;
+  function buildBase() {
+    const img = ctx.createImageData(W, H);
+    const d = img.data;
+    const hs = new Float32Array(W * H);
+    let mn = Infinity, mx = -Infinity;
+    for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
+      const h = heightAt(x / W, y / H); hs[y * W + x] = h;
+      if (h < mn) mn = h; if (h > mx) mx = h;
+    }
+    for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
+      const i = y * W + x, h = hs[i], t = (h - mn) / (mx - mn);
+      let r, g, b;
+      if (t < 0.5) { const k = t / 0.5; r = 122 + k * 58; g = 142 + k * 28; b = 82 + k * 18; }
+      else { const k = (t - 0.5) / 0.5; r = 180 + k * 40; g = 170 - k * 30; b = 100 - k * 40; }
+      const band = Math.floor(h / INTERVAL);
+      const bl = x > 0 ? Math.floor(hs[i - 1] / INTERVAL) : band;
+      const bu = y > 0 ? Math.floor(hs[i - W] / INTERVAL) : band;
+      const isC = band !== bl || band !== bu;
+      const p = i * 4;
+      if (isC) { const c = band % 5 === 0 ? 70 : 110; d[p] = c; d[p + 1] = c * 0.7; d[p + 2] = c * 0.4; }
+      else { d[p] = r; d[p + 1] = g; d[p + 2] = b; }
+      d[p + 3] = 255;
+    }
+    base = img;
+  }
+
+  function drawScene(prog) { // prog = כמה קטעי ציר לצייר (0..SEGS.length)
+    if (!base) buildBase();
+    ctx.putImageData(base, 0, 0);
+    // הערוץ (כחול)
+    ctx.strokeStyle = '#4a7c8c'; ctx.lineWidth = 3; ctx.lineCap = 'round';
+    ctx.beginPath();
+    CH.forEach(([u, v], i) => { const [x, y] = P(u, v); i ? ctx.lineTo(x, y) : ctx.moveTo(x, y); });
+    ctx.stroke();
+    // דרך עפר (מקווקו שחור)
+    ctx.strokeStyle = '#2b2f22'; ctx.lineWidth = 2.5; ctx.setLineDash([9, 6]);
+    ctx.beginPath(); ctx.moveTo(0.04 * W, ROAD_Y * H); ctx.lineTo(0.97 * W, ROAD_Y * H); ctx.stroke();
+    ctx.setLineDash([]);
+    // בור מים (סמל מפה: עיגול כחול)
+    ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(WATER[0], WATER[1], 8, 0, TAU); ctx.fill();
+    ctx.strokeStyle = '#4a7c8c'; ctx.lineWidth = 2.5; ctx.beginPath(); ctx.arc(WATER[0], WATER[1], 8, 0, TAU); ctx.stroke();
+    ctx.fillStyle = '#4a7c8c'; ctx.beginPath(); ctx.arc(WATER[0], WATER[1], 3, 0, TAU); ctx.fill();
+    // דגל נ.ה
+    ctx.strokeStyle = '#26301c'; ctx.lineWidth = 2.5;
+    ctx.beginPath(); ctx.moveTo(START[0], START[1]); ctx.lineTo(START[0], START[1] - 20); ctx.stroke();
+    ctx.fillStyle = '#4e9a3a';
+    ctx.beginPath(); ctx.moveTo(START[0], START[1] - 20); ctx.lineTo(START[0] - 15, START[1] - 14); ctx.lineTo(START[0], START[1] - 8); ctx.closePath(); ctx.fill();
+    // תוויות
+    haloText('נ.ה', START[0] + 2, START[1] + 16, 12, '#26301c', 800);
+    haloText('האוכף', SADDLE[0], SADDLE[1] - 8, 11, '#6b4c22');
+    haloText('הערוץ', P(0.585, 0.60)[0] + 16, P(0.585, 0.60)[1], 11, '#2e5866');
+    haloText('דרך עפר', 0.14 * W, ROAD_Y * H - 8, 11, '#2b2f22');
+    haloText('בור מים', WATER[0], WATER[1] + 22, 11, '#2e5866', 800);
+    // קטעי הציר שכבר "סופרו"
+    ctx.strokeStyle = '#b5482f'; ctx.lineWidth = 3.5; ctx.lineCap = 'round'; ctx.setLineDash([1, 7]);
+    for (let s = 0; s < prog; s++) SEGS[s] && SEGS[s]();
+    ctx.setLineDash([]);
+  }
+
+  const dot = (x, y) => { ctx.setLineDash([]); ctx.fillStyle = '#b5482f'; ctx.beginPath(); ctx.arc(x, y, 5, 0, TAU); ctx.fill(); ctx.strokeStyle = '#fff'; ctx.lineWidth = 1.5; ctx.stroke(); ctx.setLineDash([1, 7]); };
+  const seg = (a, b) => { ctx.beginPath(); ctx.moveTo(a[0], a[1]); ctx.lineTo(b[0], b[1]); ctx.stroke(); };
+  // ציור מצטבר: כל איבר = מה מצטרף כשעוד משפט נענה נכון
+  const SEGS = [
+    () => { dot(START[0], START[1]); },                                   // 1 יציאה
+    () => { seg(START, SADDLE); dot(SADDLE[0], SADDLE[1]); },             // 2 ירידה לאוכף
+    () => { seg(SADDLE, CHHEAD); dot(CHHEAD[0], CHHEAD[1]); },            // 3 פנייה לראש הערוץ
+    () => { for (let i = 0; i < CH.length - 1; i++) seg(P(...CH[i]), P(...CH[i + 1])); dot(JUNCTION[0], JUNCTION[1]); }, // 4 לאורך הערוץ
+    () => { ctx.save(); ctx.setLineDash([]); ctx.strokeStyle = '#d4a02c'; ctx.lineWidth = 3;
+            ctx.strokeRect(JUNCTION[0] - 16, JUNCTION[1] - 16, 32, 32); ctx.restore(); },  // 5 קו עצירה/תקיפה
+    () => { seg(JUNCTION, WATER); dot(WATER[0], WATER[1]);
+            ctx.save(); ctx.setLineDash([]); ctx.strokeStyle = '#4e9a3a'; ctx.lineWidth = 3;
+            ctx.beginPath(); ctx.arc(WATER[0], WATER[1], 15, 0, TAU); ctx.stroke(); ctx.restore(); } // 6 הנקודה
+  ];
+
+  /* --- המשפטים (הסדר הנכון) --- */
+  const LINES = [
+    'יוצאים מנקודת ההתחלה שבפסגה המערבית, פנים מזרחה — לכיוון האוכף הנראה מתחתינו.',
+    'יורדים במדרון המתון אל האוכף שבין שתי הפסגות (נקודת גבייה ראשונה).',
+    'מהאוכף פונים ימינה (דרום־מזרח) ויורדים אל ראש הערוץ שמתחת.',
+    'נצמדים לערוץ — הקו המוביל שלנו — ועוקבים אחריו במורד, כשהוא מתרחב והולך.',
+    'כשהערוץ פוגש את דרך העפר — קו העצירה — עוצרים: זו נקודת התקיפה. אם חצינו את הדרך, הרחקנו.',
+    'מהצומת פונים שמאלה (מזרחה) לאורך הדרך כ־200 מ׳ — בור המים בצד הדרך: הגענו לנקודה.'
+  ];
+
+  let next = 0;
+  const pool = document.getElementById('storyPool');
+  const built = document.getElementById('storyBuilt');
+  const fb = document.getElementById('storyFeedback');
+
+  function shuffle(arr) { const a = [...arr]; for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+
+  function reset() {
+    next = 0; built.innerHTML = ''; fb.textContent = ''; fb.className = 'feedback';
+    let order = shuffle(LINES.map((_, i) => i));
+    if (order.every((v, i) => v === i)) order = shuffle(order); // לא להתחיל פתור
+    pool.innerHTML = '';
+    order.forEach(idx => {
+      const b = document.createElement('button');
+      b.textContent = LINES[idx]; b.dataset.idx = idx;
+      b.addEventListener('click', () => pick(b));
+      pool.appendChild(b);
+    });
+    drawScene(0);
+  }
+
+  function pick(btn) {
+    const idx = +btn.dataset.idx;
+    if (idx === next) {
+      const li = document.createElement('li'); li.textContent = LINES[idx];
+      built.appendChild(li); btn.remove(); next++;
+      drawScene(next);
+      if (next === LINES.length) { fb.className = 'feedback ok'; fb.textContent = '🎉 סיפור הדרך הושלם — והציר צויר במלואו. כך זה נראה גם בראש של הנווט.'; }
+      else { fb.className = 'feedback ok'; fb.textContent = `✓ נכון (${next}/${LINES.length})`; }
+    } else {
+      btn.classList.add('wrong');
+      fb.className = 'feedback bad';
+      fb.textContent = next === 0 ? '✗ רגע — מאיפה מתחיל כל סיפור דרך? מנקודת ההתחלה.' : '✗ לא לפי הסדר. איפה אנחנו כרגע על הציר?';
+      setTimeout(() => btn.classList.remove('wrong'), 350);
+    }
+  }
+
+  document.getElementById('storyReset').addEventListener('click', reset);
+  reset();
 })();
 
 /* =======================================================================
@@ -712,7 +903,9 @@ const gridTrainer = (() => {
     { q:'כיצד ייראו קווי הגובה של ערוץ (אפיק ניקוז)?',
       o:['מעגלים סגורים','⋁ שקודקודו פונה במעלה (נגד זרימת המים)','קווים ישרים ומקבילים','⋀ שקודקודו פונה במורד'], a:1, e:'בערוץ קווי הגובה יוצרים ⋁ שקודקודו פונה במעלה; בשלוחה הפוך — ⋀ במורד. [מקור 4]' },
     { q:'מהי מטרת הנדב״ר (נוהל דיבור ברדיו) בזמן ניווט?',
-      o:['הצפנת ההודעה כך שהאויב לא יבין','דיבור תקין, קצר ומובן ומניעת הפרעות ברשת','הגדלת טווח מכשיר הקשר','חישוב אזימוט אל המטרה'], a:1, e:'נדב״ר נועד למבנה דיבור תקין, קיצור התקשורת, מניעת הפרעות ווידוא הבנה — מטרתו אינה הצפנה. [מקור 14]' }
+      o:['הצפנת ההודעה כך שהאויב לא יבין','דיבור תקין, קצר ומובן ומניעת הפרעות ברשת','הגדלת טווח מכשיר הקשר','חישוב אזימוט אל המטרה'], a:1, e:'נדב״ר נועד למבנה דיבור תקין, קיצור התקשורת, מניעת הפרעות ווידוא הבנה — מטרתו אינה הצפנה. [מקור 14]' },
+    { q:'בסיפור דרך — מהו "קו עצירה"?',
+      o:['הקו שבו עוצרים למנוחה ושתייה','תוואי בולט שנמצא אחרי הנקודה, שמאותת שעברנו אותה','הקו שמפריד בין גזרות הניווט','קו הרשת הקרוב ביותר לנקודה'], a:1, e:'קו עצירה הוא רשת הביטחון של הרגל: תוואי ברור מעבר לנקודה — אם הגעתם אליו, עברתם את הנקודה וחוזרים. [מקורות 15–16]' }
   ];
   let i = 0, score = 0, answered = false;
 

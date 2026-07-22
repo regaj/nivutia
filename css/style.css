@@ -370,6 +370,37 @@ html[data-theme="dark"] .src-list a { color: var(--water-light); }
 ul.tight { margin: 8px 0; padding-inline-start: 22px; }
 ul.tight li { margin: 3px 0; color: var(--text-soft); }
 
+/* ---------- סיפור דרך: משחק סידור ---------- */
+.story-pool { display: flex; flex-direction: column; gap: 8px; margin: 10px 0 12px; }
+.story-pool button {
+  text-align: start; padding: 10px 12px; border-radius: 9px; cursor: pointer;
+  border: 1px solid var(--border); background: var(--surface-2); color: var(--text);
+  font-family: inherit; font-size: 0.92rem; line-height: 1.45;
+  transition: background 0.15s, transform 0.1s;
+}
+.story-pool button:hover { background: var(--accent-soft); }
+.story-pool button.wrong { animation: shake 0.3s; border-color: var(--danger); }
+.story-built { margin: 0 0 4px; padding-inline-start: 22px; min-height: 8px; }
+.story-built li {
+  background: rgba(78,154,58,0.12); border: 1px solid rgba(78,154,58,0.4);
+  border-radius: 8px; padding: 7px 10px; margin: 6px 0;
+  font-size: 0.92rem; color: var(--text); line-height: 1.45;
+}
+@keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-5px)} 75%{transform:translateX(5px)} }
+
+/* ---------- סיפור דרך: שלד בסדנה ---------- */
+.story-skel { margin-top: 20px; border-top: 1px dashed var(--border); padding-top: 14px; }
+.story-skel .leg-story {
+  background: var(--surface-2); border-inline-start: 4px solid var(--khaki);
+  border-radius: 8px; padding: 10px 14px; margin: 8px 0;
+  font-size: 0.95rem; line-height: 1.7; color: var(--text);
+}
+.story-skel .leg-story b { color: var(--heading); }
+.story-skel .blank {
+  display: inline-block; min-width: 120px; border-bottom: 2px dotted var(--contour);
+  color: var(--contour); font-size: 0.85em; text-align: center; padding: 0 6px;
+}
+
 /* ---------- Mobile ---------- */
 @media (max-width: 600px) {
   .nav-wrap { gap: 8px; padding: 8px 12px; }
