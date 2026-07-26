@@ -187,11 +187,12 @@
       </div>
     </div>
 
-    <h3 style="margin-top:30px;color:var(--heading)">מהצילום למפה — דוגמה אמיתית מגוש עציון 📷</h3>
-    <p class="lead" style="font-size:1rem">זה כבר לא ציור: <b>תצלום אמיתי</b> של השטח מול <b>קטעי המפה האמיתיים</b> של אותו אזור, מתוך שיעור 1. לחצו על סמן בתצלום (או על כפתור) — ותראו איך בדיוק אותה צורה נראית על מפת 1:50,000.<sup class="ref"><a href="#src18">18</a></sup></p>
+    <h3 style="margin-top:30px;color:var(--heading)">מהצילום למפה — מקומות אמיתיים 📷</h3>
+    <p class="lead" style="font-size:1rem">זה כבר לא ציור: <b>תצלום אמיתי</b> של השטח מול <b>המפה הטופוגרפית של אותו מקום בדיוק</b>. בחרו אתר, לחצו על סמן בתצלום (או על כפתור) — וראו את הצורה על המפה. באתרים המזוהים (תבור, מצדה, רמון) העיגול האדום שעל המפה מסומן <b>בקואורדינטות המדויקות</b> של המקום.<sup class="ref"><a href="#src18">18</a></sup><sup class="ref"><a href="#src19">19</a></sup></p>
+    <div class="seg site-seg" id="realSites"></div>
     <div class="real-layout">
       <div class="photo-wrap" id="realPhoto">
-        <img src="assets/real/gush-photo.jpg" alt="תצלום נוף אמיתי של גוש עציון — כיפות, שלוחות, גיאיות ואוכפים" loading="lazy">
+        <img id="realPhotoImg" src="assets/real/gush-photo.jpg" alt="תצלום שטח אמיתי" loading="lazy">
         <!-- pins injected by JS -->
       </div>
       <div class="control-card real-panel">
@@ -200,7 +201,7 @@
         <div class="note" id="realCap" style="margin-bottom:0"></div>
       </div>
     </div>
-    <p class="small">התצלום וקטעי המפה — מתוך מצגת שיעור 1 של הקורס (אזור כפר עציון, גבעת הסלעים והכיפה 967). במפות המסומנות: <b style="color:var(--water)">כחול = כיוון עלייה</b>, <b style="color:var(--danger)">אדום = כיוון ירידה</b>.</p>
+    <p class="small" id="realCredit"></p>
   </section>
 
   <!-- ============ 4. PRACTICAL MAP READING ============ -->
@@ -744,6 +745,8 @@
       <li id="src16"><span class="tag">[16] ניווט גס וניווט עדין</span> — ניווטונט (בלוג הניווט הישראלי): ההבחנה בין ניווט גס (דילוג על פרטים לאורך תוואי) לניווט עדין (היצמדות לרצף פריטים אל הנקודה). <a href="http://blog.nivut.org.il/2012/12/blog-post_5.html" target="_blank" rel="noopener">blog.nivut.org.il — בין התמצאות לניווט</a></li>
       <li id="src17"><span class="tag">[17] גיא · עמק · בקעה · ערוץ</span> — ויקיפדיה: גיא = "שקע צר וארוך בין רכסי הרים", נתיב ניקוז; עמק/גיא = אזור הנמוך מסביבתו; בקעה = עמק גדול; ערוץ = "עמק קטן שנוצר על ידי זרימת מים". <a href="https://he.wikipedia.org/wiki/גיא" target="_blank" rel="noopener">he.wikipedia — גיא</a> · <a href="https://he.wikipedia.org/wiki/עמק" target="_blank" rel="noopener">עמק</a></li>
       <li id="src18"><span class="tag">[18] מצגות הקורס — ניווטים, שיעורים 1–3</span> — חומרי הלימוד הרשמיים של הקורס (מבוא וקריאת מפה; מדידות ונדב״ר; בניית ציר וסיפור דרך). תוכן האתר הוצלב ותואם איתן. <a href="#decks">להורדה מהאתר ↑</a></li>
+      <li id="src19"><span class="tag">[19] OpenTopoMap / OpenStreetMap</span> — קטעי המפה הטופוגרפית של הר תבור, מצדה ומכתש רמון ב״מהצילום למפה״: © OpenStreetMap contributors, SRTM; סגנון © OpenTopoMap, רישיון CC-BY-SA. הסימונים נקבעו לפי הקואורדינטות המדויקות של האתרים. <a href="https://opentopomap.org" target="_blank" rel="noopener">opentopomap.org</a></li>
+      <li id="src20"><span class="tag">[20] תצלומי ויקישיתוף</span> — הר תבור: Ilan Costica (CC BY 3.0) · מצדה: Neukoln / פרויקט WikiAir (CC BY-SA 3.0) · מכתש רמון: Godot13 (CC BY-SA 4.0). <a href="https://commons.wikimedia.org/wiki/File:Mount_Tabor_in_Israel.JPG" target="_blank" rel="noopener">תבור</a> · <a href="https://commons.wikimedia.org/wiki/File:WikiAir_IL-13-06_040_-_Roman_ramp_at_Masada.jpg" target="_blank" rel="noopener">מצדה</a> · <a href="https://commons.wikimedia.org/wiki/File:Israel-2013-Aerial_00-Negev-Makhtesh_Ramon.jpg" target="_blank" rel="noopener">רמון</a></li>
     </ul>
   </section>
 

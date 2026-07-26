@@ -609,51 +609,100 @@ const gridTrainer = (() => {
 })();
 
 /* =======================================================================
-   2א. מהצילום למפה — השוואה אמיתית (גוש עציון, מתוך שיעור 1)
+   2א. מהצילום למפה — השוואה אמיתית, רב־אתרים
    ======================================================================= */
 (() => {
   const photo = document.getElementById('realPhoto');
   if (!photo) return;
+  const photoImg = document.getElementById('realPhotoImg');
+  const sitesSeg = document.getElementById('realSites');
   const seg = document.getElementById('realSeg');
   const mapImg = document.getElementById('realMapImg');
   const cap = document.getElementById('realCap');
+  const credit = document.getElementById('realCredit');
 
-  // מיקומי הסמנים באחוזים מגודל התצלום (אומתו מול התצלום המקורי)
-  const FORMS = [
-    { key: 'kipa', label: 'כיפה', pin: [47.5, 29.5], img: 'assets/real/map-kipa.png',
-      cap: 'הגבעה הכהה שבמרכז התצלום היא כיפה — נקודת שיא מקומית שיורדים ממנה לכל כיוון. במפה: קווי הגובה נסגרים בטבעות סביב נקודת הגובה 967 — מכל כיוון שיוצאים ממנה, יורדים.' },
-    { key: 'shlucha', label: 'שלוחה', pin: [38.5, 42.1], img: 'assets/real/map-shlucha-gai.png',
-      cap: 'הכתף היורדת מהכיפה שמאלה היא שלוחה — הקרקע הגבוהה שעולה בין הגיאיות (החץ הכחול במפה). בראשה כיוון עלייה אחד ושלושה כיווני ירידה; לעלות עליה זו הדרך הבטוחה לטפס לכיפה.' },
-    { key: 'gai', label: 'גיא', pin: [70.0, 50.5], img: 'assets/real/map-shlucha-gai.png',
-      cap: 'רצועת העצים שבין הכיפה לרכס שמימין — שם עובר הגיא (החץ האדום במפה), והוא יורד היישר מהאוכף שמעליו: תמיד בין שתי שלוחות, המים יורדים בו אל הנחל. במפה קודקוד קווי הגובה מצביע במעלה, והנחל האכזב מסומן בקו כחול מקווקו בקרקעיתו.' },
-    { key: 'okaf', label: 'אוכף', pin: [71.9, 32.0], img: 'assets/real/map-okaf.png',
-      cap: 'הביטו בקו הגג של הרכס: שתי בליטות מיוערות, וביניהן שקע — שדרך ה"פתח" שלו נשקף השטח שמאחור. זה אוכף: הנקודה הנמוכה שבין שני בלטים, ושימו לב שהגיא (הסמן שמתחת) יורד בדיוק ממנו — כי מאוכף יורדות שתי ירידות אל הגיאיות. במפה (דוגמה מאותו אזור): האוכף שבין 949 ל־967, והשביל חוצה דווקא בו.' }
+  const GUSH_CREDIT = 'גוש עציון: התצלום וקטעי המפה מתוך מצגת שיעור 1 (כפר עציון, גבעת הסלעים והכיפה 967). במפות המסומנות: כחול = כיוון עלייה, אדום = כיוון ירידה.';
+  const OTM = 'מפה: © OpenStreetMap contributors, SRTM · סגנון: OpenTopoMap (CC-BY-SA). העיגול האדום — בקואורדינטות המדויקות.';
+
+  const SITES = [
+    { key: 'gush', label: 'גוש עציון (מהשיעור)', photo: 'assets/real/gush-photo.jpg',
+      alt: 'תצלום נוף של גוש עציון', credit: GUSH_CREDIT,
+      forms: [
+        { key: 'kipa', label: 'כיפה', pin: [47.5, 29.5], img: 'assets/real/map-kipa.png',
+          cap: 'הגבעה הכהה שבמרכז התצלום היא כיפה — נקודת שיא מקומית שיורדים ממנה לכל כיוון. במפה: קווי הגובה נסגרים בטבעות סביב נקודת הגובה 967 — מכל כיוון שיוצאים ממנה, יורדים.' },
+        { key: 'shlucha', label: 'שלוחה', pin: [38.5, 42.1], img: 'assets/real/map-shlucha-gai.png',
+          cap: 'הכתף היורדת מהכיפה שמאלה היא שלוחה — הקרקע הגבוהה שעולה בין הגיאיות (החץ הכחול במפה). בראשה כיוון עלייה אחד ושלושה כיווני ירידה; לעלות עליה זו הדרך הבטוחה לטפס לכיפה.' },
+        { key: 'gai', label: 'גיא', pin: [70.0, 50.5], img: 'assets/real/map-shlucha-gai.png',
+          cap: 'רצועת העצים שבין הכיפה לרכס שמימין — שם עובר הגיא (החץ האדום במפה), והוא יורד היישר מהאוכף שמעליו: תמיד בין שתי שלוחות, המים יורדים בו אל הנחל. במפה קודקוד קווי הגובה מצביע במעלה, והנחל האכזב מסומן בקו כחול מקווקו בקרקעיתו.' },
+        { key: 'okaf', label: 'אוכף', pin: [71.9, 32.0], img: 'assets/real/map-okaf.png',
+          cap: 'הביטו בקו הגג של הרכס: שתי בליטות מיוערות, וביניהן שקע — שדרך ה"פתח" שלו נשקף השטח שמאחור. זה אוכף: הנקודה הנמוכה שבין שני בלטים, ושימו לב שהגיא (הסמן שמתחת) יורד בדיוק ממנו — כי מאוכף יורדות שתי ירידות אל הגיאיות. במפה (דוגמה מאותו אזור): האוכף שבין 949 ל־967, והשביל חוצה דווקא בו.' }
+      ] },
+    { key: 'tabor', label: 'הר תבור — כיפה', photo: 'assets/real/tabor.jpg',
+      alt: 'הר תבור', map: 'assets/real/map-tabor.png',
+      credit: 'הר תבור — תצלום: Ilan Costica, ויקישיתוף (CC BY 3.0) · ' + OTM,
+      forms: [
+        { key: 'tkipa', label: 'כיפה', pin: [41.0, 30.5],
+          cap: 'הר תבור (575 מ׳) — הכיפה המפורסמת של ישראל: מתרומם לבדו מעמק יזרעאל, יורד לכל הכיוונים. במפה: טבעות קווי גובה סגורות זו בתוך זו סביב הפסגה (העיגול האדום — נ״צ הפסגה המדויקת), והדרך המתפתלת בסרפנטינות במדרון — סימן מובהק לתלילות.' }
+      ] },
+    { key: 'masada', label: 'מצדה — שלוחה · גיא · מצוק', photo: 'assets/real/masada.jpg',
+      alt: 'מצדה מהאוויר — הסוללה הרומית', map: 'assets/real/map-masada.png',
+      credit: 'מצדה — תצלום אוויר: Neukoln / WikiAir, ויקישיתוף (CC BY-SA 3.0) · ' + OTM,
+      forms: [
+        { key: 'mshl', label: 'שלוחה (הסוללה)', pin: [46, 45],
+          cap: 'הרכס הבהיר שמטפס אל ההר ממערב הוא שלוחה טבעית — שעליה בנו הרומאים את סוללת המצור. שימו לב איך השביל עולה בדיוק על קו הגב שלה: תוואי העלייה הבטוח. במפה: הרכס הצר שמחבר את הרמה אל הגב ההררי ממערב (העיגול האדום — נ״צ המצודה).' },
+        { key: 'mgai', label: 'גיא', pin: [36, 58],
+          cap: 'משני צידי השלוחה חותרים ואדיות עמוקים — הגיאיות שמנקזים את ההר (נחל מצדה ושכניו). בתצלום רואים את החתירה בדיוק מתחת לבסיס הסוללה. במפה: הקווים הכחולים המקווקווים העוטפים את ההר משני עבריו.' },
+        { key: 'mtsuk', label: 'מצוק', pin: [22, 32],
+          cap: 'קירות הסלע האנכיים של מצדה — מצוק קלאסי: שינוי גובה חד כמעט ללא מרחק אופקי. במפה אי אפשר לצייר שם קווי גובה נפרדים — לכן מופיע סימון השנתות (השיניים השחורות) סביב הרמה כולה.' }
+      ] },
+    { key: 'ramon', label: 'מכתש רמון — שקע סגור', photo: 'assets/real/ramon.jpg',
+      alt: 'מכתש רמון מהשפה', map: 'assets/real/map-ramon.png',
+      credit: 'מכתש רמון — תצלום אוויר: Godot13, ויקישיתוף (CC BY-SA 4.0) · ' + OTM,
+      forms: [
+        { key: 'rmakh', label: 'מכתש (שקע סגור)', pin: [52, 62],
+          cap: 'מבט מעל השפה אל רצפת המכתש — שקע ענק שכולו מוקף קירות: מהשטח רואים רק "קיר ורצפה", ורק המפה חושפת שהצורה סגורה לגמרי. במפה: האליפסה המוארכת של המכתש, ומצפה רמון (העיגול האדום — הנ״צ המדויק) יושבת בדיוק על השפה הצפונית; כביש 40 יורד אל תוכו במעלה העצמאות.' }
+      ] }
   ];
 
-  let current = null;
-  function select(key) {
-    current = key;
-    const f = FORMS.find(x => x.key === key);
-    mapImg.src = f.img;
+  let site = null;
+  function selectForm(key) {
+    const f = site.forms.find(x => x.key === key);
+    mapImg.src = f.img || site.map;
     cap.innerHTML = `<b>${f.label}:</b> ${f.cap}`;
     photo.querySelectorAll('.pin').forEach(p => p.classList.toggle('on', p.dataset.key === key));
     seg.querySelectorAll('button').forEach(b => b.classList.toggle('on', b.dataset.key === key));
   }
 
-  FORMS.forEach(f => {
-    const pin = document.createElement('button');
-    pin.className = 'pin'; pin.dataset.key = f.key;
-    pin.style.left = f.pin[0] + '%'; pin.style.top = f.pin[1] + '%';
-    pin.setAttribute('aria-label', f.label);
-    pin.innerHTML = `<span class="tag">${f.label}</span><span class="dot"></span>`;
-    pin.addEventListener('click', () => select(f.key));
-    photo.appendChild(pin);
-    const btn = document.createElement('button');
-    btn.dataset.key = f.key; btn.textContent = f.label;
-    btn.addEventListener('click', () => select(f.key));
-    seg.appendChild(btn);
+  function renderSite(key) {
+    site = SITES.find(x => x.key === key);
+    photoImg.src = site.photo; photoImg.alt = site.alt;
+    credit.textContent = site.credit;
+    photo.querySelectorAll('.pin').forEach(p => p.remove());
+    seg.innerHTML = '';
+    site.forms.forEach(f => {
+      const pin = document.createElement('button');
+      pin.className = 'pin'; pin.dataset.key = f.key;
+      pin.style.left = f.pin[0] + '%'; pin.style.top = f.pin[1] + '%';
+      pin.setAttribute('aria-label', f.label);
+      pin.innerHTML = `<span class="tag">${f.label}</span><span class="dot"></span>`;
+      pin.addEventListener('click', () => selectForm(f.key));
+      photo.appendChild(pin);
+      const btn = document.createElement('button');
+      btn.dataset.key = f.key; btn.textContent = f.label;
+      btn.addEventListener('click', () => selectForm(f.key));
+      seg.appendChild(btn);
+    });
+    sitesSeg.querySelectorAll('button').forEach(b => b.classList.toggle('on', b.dataset.key === key));
+    selectForm(site.forms[0].key);
+  }
+
+  SITES.forEach(s => {
+    const b = document.createElement('button');
+    b.dataset.key = s.key; b.textContent = s.label;
+    b.addEventListener('click', () => renderSite(s.key));
+    sitesSeg.appendChild(b);
   });
-  select('kipa');
+  renderSite('gush');
 })();
 
 /* =======================================================================

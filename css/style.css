@@ -384,6 +384,9 @@ ul.tight { margin: 8px 0; padding-inline-start: 22px; }
 ul.tight li { margin: 3px 0; color: var(--text-soft); }
 
 /* ---------- מהצילום למפה (השוואה אמיתית) ---------- */
+.site-seg { margin-top: 14px; }
+.site-seg button { flex: 1 1 auto; }
+.site-seg button.on { background: var(--contour); border-color: var(--contour); color: #fff; }
 .real-layout { display: grid; grid-template-columns: 1.35fr 1fr; gap: 18px; align-items: start; margin-top: 14px; }
 @media (max-width: 900px) { .real-layout { grid-template-columns: 1fr; } }
 .photo-wrap {
