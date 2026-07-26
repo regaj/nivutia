@@ -383,6 +383,40 @@ html[data-theme="dark"] .src-list a { color: var(--water-light); }
 ul.tight { margin: 8px 0; padding-inline-start: 22px; }
 ul.tight li { margin: 3px 0; color: var(--text-soft); }
 
+/* ---------- מהצילום למפה (השוואה אמיתית) ---------- */
+.real-layout { display: grid; grid-template-columns: 1.35fr 1fr; gap: 18px; align-items: start; margin-top: 14px; }
+@media (max-width: 900px) { .real-layout { grid-template-columns: 1fr; } }
+.photo-wrap {
+  position: relative; border-radius: var(--radius); overflow: hidden;
+  border: 1px solid var(--border); box-shadow: var(--shadow); background: #000;
+}
+.photo-wrap img { width: 100%; height: auto; display: block; }
+.pin {
+  position: absolute; transform: translate(-50%, -100%);
+  display: flex; flex-direction: column; align-items: center; gap: 2px;
+  cursor: pointer; border: none; background: none; padding: 0; font-family: inherit;
+}
+.pin .dot {
+  width: 16px; height: 16px; border-radius: 50%;
+  background: var(--accent); border: 2.5px solid #fff;
+  box-shadow: 0 0 0 3px rgba(212,160,44,0.35), 0 2px 6px rgba(0,0,0,0.5);
+  animation: pinpulse 1.8s infinite;
+}
+.pin .tag {
+  background: rgba(20,24,15,0.82); color: #fff; font-size: 0.78rem; font-weight: 700;
+  padding: 2px 9px; border-radius: 999px; white-space: nowrap;
+  border: 1px solid rgba(255,255,255,0.35);
+}
+.pin.on .dot { background: var(--danger); box-shadow: 0 0 0 4px rgba(181,72,47,0.45), 0 2px 6px rgba(0,0,0,0.5); animation: none; }
+.pin.on .tag { background: var(--danger); border-color: #fff; }
+@keyframes pinpulse { 0%,100% { box-shadow: 0 0 0 3px rgba(212,160,44,0.35), 0 2px 6px rgba(0,0,0,0.5);} 50% { box-shadow: 0 0 0 8px rgba(212,160,44,0.12), 0 2px 6px rgba(0,0,0,0.5);} }
+.real-panel { padding: 16px; }
+.real-map-wrap {
+  border-radius: 8px; overflow: hidden; border: 1px solid var(--border);
+  background: #fff; margin: 10px 0 12px; text-align: center;
+}
+.real-map-wrap img { max-width: 100%; max-height: 300px; display: inline-block; }
+
 /* ---------- סיפור דרך: משחק סידור ---------- */
 .story-pool { display: flex; flex-direction: column; gap: 8px; margin: 10px 0 12px; }
 .story-pool button {

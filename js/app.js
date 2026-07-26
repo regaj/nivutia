@@ -609,6 +609,54 @@ const gridTrainer = (() => {
 })();
 
 /* =======================================================================
+   2א. מהצילום למפה — השוואה אמיתית (גוש עציון, מתוך שיעור 1)
+   ======================================================================= */
+(() => {
+  const photo = document.getElementById('realPhoto');
+  if (!photo) return;
+  const seg = document.getElementById('realSeg');
+  const mapImg = document.getElementById('realMapImg');
+  const cap = document.getElementById('realCap');
+
+  // מיקומי הסמנים באחוזים מגודל התצלום (אומתו מול התצלום המקורי)
+  const FORMS = [
+    { key: 'kipa', label: 'כיפה', pin: [47.5, 29.5], img: 'assets/real/map-kipa.png',
+      cap: 'הגבעה הכהה שבמרכז התצלום היא כיפה — נקודת שיא מקומית שיורדים ממנה לכל כיוון. במפה: קווי הגובה נסגרים בטבעות סביב נקודת הגובה 967 — מכל כיוון שיוצאים ממנה, יורדים.' },
+    { key: 'shlucha', label: 'שלוחה', pin: [38.5, 42.1], img: 'assets/real/map-shlucha-gai.png',
+      cap: 'הכתף היורדת מהכיפה שמאלה היא שלוחה — הקרקע הגבוהה שעולה בין הגיאיות (החץ הכחול במפה). בראשה כיוון עלייה אחד ושלושה כיווני ירידה; לעלות עליה זו הדרך הבטוחה לטפס לכיפה.' },
+    { key: 'gai', label: 'גיא', pin: [70.0, 50.5], img: 'assets/real/map-shlucha-gai.png',
+      cap: 'רצועת העצים שבין הכיפה לרכס שמימין — שם עובר הגיא (החץ האדום במפה): תמיד בין שתי שלוחות, המים יורדים בו אל הנחל. במפה קודקוד קווי הגובה מצביע במעלה, והנחל האכזב מסומן בקו כחול מקווקו בקרקעיתו.' },
+    { key: 'okaf', label: 'אוכף', pin: [27.5, 23.2], img: 'assets/real/map-okaf.png',
+      cap: '"על קו הרקיע: כמה כיפות, וביניהן שקעים — אלה האוכפים." השקע שבקו הרקיע הרחוק הוא אוכף: הנקודה הנמוכה על הרכס בין שני גבהים (במפה — בין 949 ל־967), עם שתי עליות מנוגדות ושתי ירידות. שימו לב שהשביל במפה חוצה דווקא בו.' }
+  ];
+
+  let current = null;
+  function select(key) {
+    current = key;
+    const f = FORMS.find(x => x.key === key);
+    mapImg.src = f.img;
+    cap.innerHTML = `<b>${f.label}:</b> ${f.cap}`;
+    photo.querySelectorAll('.pin').forEach(p => p.classList.toggle('on', p.dataset.key === key));
+    seg.querySelectorAll('button').forEach(b => b.classList.toggle('on', b.dataset.key === key));
+  }
+
+  FORMS.forEach(f => {
+    const pin = document.createElement('button');
+    pin.className = 'pin'; pin.dataset.key = f.key;
+    pin.style.left = f.pin[0] + '%'; pin.style.top = f.pin[1] + '%';
+    pin.setAttribute('aria-label', f.label);
+    pin.innerHTML = `<span class="tag">${f.label}</span><span class="dot"></span>`;
+    pin.addEventListener('click', () => select(f.key));
+    photo.appendChild(pin);
+    const btn = document.createElement('button');
+    btn.dataset.key = f.key; btn.textContent = f.label;
+    btn.addEventListener('click', () => select(f.key));
+    seg.appendChild(btn);
+  });
+  select('kipa');
+})();
+
+/* =======================================================================
    2ב. קריאת מפה בפרקטיקה — מחשבון שיפוע
    ======================================================================= */
 (() => {
