@@ -152,8 +152,8 @@ const contour = (() => {
     peak:   { u: 0.28, v: 0.40, txt: 'פסגה — קווי גובה סגורים זה בתוך זה, יורדת לכל הכיוונים. נקודת התמצאות בולטת ומצוינת.' },
     saddle: { u: 0.49, v: 0.37, txt: 'אוכף — האזור הנמוך שבין שתי פסגות; שני כיוונים עולים ושניים יורדים. מעבר נוח בין אגני ניקוז.' },
     ridge:  { u: 0.16, v: 0.66, txt: 'שלוחה — לשון גבוהה היורדת לשלושה כיוונים; קווי הגובה יוצרים ⋀ שקודקודו במורד. ציר תנועה נוח.' },
-    valley: { u: 0.57, v: 0.78, txt: 'ערוץ — תוואי ניקוז המים; קווי הגובה יוצרים ⋁ שקודקודו במעלה. "עמוד השדרה" של המפה.' },
-    all:    { txt: 'זהו מרחב עם שתי פסגות, אוכף ביניהן, שלוחה יורדת מהפסגה, וערוץ ניקוז. גררו את המפלס — ראו כיצד "טבעת" קו הגובה נעה עם הגובה.' }
+    valley: { u: 0.57, v: 0.78, txt: 'גיא — השקע המוארך שבין השלוחות, נתיב ניקוז המים; בקרקעיתו חתור הערוץ (אפיק הזרימה עצמו). קווי הגובה יוצרים ⋁ שקודקודו במעלה.' },
+    all:    { txt: 'זהו מרחב עם שתי פסגות, אוכף ביניהן, שלוחה יורדת מהפסגה, וגיא ניקוז שבקרקעיתו ערוץ. גררו את המפלס — ראו כיצד "טבעת" קו הגובה נעה עם הגובה.' }
   };
 
   function heightAt(u, v) {
@@ -609,6 +609,29 @@ const gridTrainer = (() => {
 })();
 
 /* =======================================================================
+   2ב. קריאת מפה בפרקטיקה — מחשבון שיפוע
+   ======================================================================= */
+(() => {
+  const iv = document.getElementById('slopeIntervals');
+  if (!iv) return;
+  const dist = document.getElementById('slopeDist');
+  const interval = document.getElementById('slopeInterval');
+  function calc() {
+    const n = Math.max(0, +iv.value || 0);
+    const step = Math.max(1, +interval.value || 10);
+    const d = Math.max(1, +dist.value || 1);
+    const rise = n * step;
+    const pct = rise / d * 100;
+    const deg = Math.atan2(rise, d) * 180 / Math.PI;
+    document.getElementById('slopeRise').textContent = rise.toLocaleString('he-IL') + ' מ׳';
+    document.getElementById('slopePct').textContent = pct.toFixed(1) + '%';
+    document.getElementById('slopeDeg').textContent = deg.toFixed(1) + '°';
+  }
+  [iv, dist, interval].forEach(el => el.addEventListener('input', calc));
+  calc();
+})();
+
+/* =======================================================================
    6ב. סיפור דרך — מפה + משחק סידור המשפטים
    ======================================================================= */
 (() => {
@@ -650,11 +673,12 @@ const gridTrainer = (() => {
   const JUNCTION = P(0.76, 0.84);    // מפגש ערוץ×דרך (קו עצירה + נקודת תקיפה)
   const WATER = P(0.90, 0.845);      // בור המים — הנקודה
   const ROAD_Y = 0.845;              // דרך העפר (אופקית)
+  const TREE = P(0.24, 0.845);       // עץ בודד — נקודת עזיבה בתרגיל ב׳
 
-  function haloText(txt, x, y, size = 12, color = '#22271c', weight = 700) {
-    ctx.font = `${weight} ${size}px Heebo, sans-serif`; ctx.textAlign = 'center';
-    ctx.lineWidth = 3.5; ctx.strokeStyle = 'rgba(255,255,255,0.85)';
-    ctx.strokeText(txt, x, y); ctx.fillStyle = color; ctx.fillText(txt, x, y);
+  function haloText(c, txt, x, y, size = 12, color = '#22271c', weight = 700) {
+    c.font = `${weight} ${size}px Heebo, sans-serif`; c.textAlign = 'center';
+    c.lineWidth = 3.5; c.strokeStyle = 'rgba(255,255,255,0.85)';
+    c.strokeText(txt, x, y); c.fillStyle = color; c.fillText(txt, x, y);
   }
 
   let base = null;
@@ -684,33 +708,49 @@ const gridTrainer = (() => {
     base = img;
   }
 
+  function paintScenery(c, variant) {
+    // הערוץ (כחול)
+    c.strokeStyle = '#4a7c8c'; c.lineWidth = 3; c.lineCap = 'round';
+    c.beginPath();
+    CH.forEach(([u, v], i) => { const [x, y] = P(u, v); i ? c.lineTo(x, y) : c.moveTo(x, y); });
+    c.stroke();
+    // דרך עפר (מקווקו שחור)
+    c.strokeStyle = '#2b2f22'; c.lineWidth = 2.5; c.setLineDash([9, 6]);
+    c.beginPath(); c.moveTo(0.04 * W, ROAD_Y * H); c.lineTo(0.97 * W, ROAD_Y * H); c.stroke();
+    c.setLineDash([]);
+    // בור מים (סמל מפה: עיגול כחול)
+    c.fillStyle = '#fff'; c.beginPath(); c.arc(WATER[0], WATER[1], 8, 0, TAU); c.fill();
+    c.strokeStyle = '#4a7c8c'; c.lineWidth = 2.5; c.beginPath(); c.arc(WATER[0], WATER[1], 8, 0, TAU); c.stroke();
+    c.fillStyle = '#4a7c8c'; c.beginPath(); c.arc(WATER[0], WATER[1], 3, 0, TAU); c.fill();
+    // דגל על הפסגה המערבית
+    c.strokeStyle = '#26301c'; c.lineWidth = 2.5;
+    c.beginPath(); c.moveTo(START[0], START[1]); c.lineTo(START[0], START[1] - 20); c.stroke();
+    c.fillStyle = variant === 'B' ? '#b5482f' : '#4e9a3a';
+    c.beginPath(); c.moveTo(START[0], START[1] - 20); c.lineTo(START[0] - 15, START[1] - 14); c.lineTo(START[0], START[1] - 8); c.closePath(); c.fill();
+    // תוויות משותפות
+    haloText(c, 'האוכף', SADDLE[0], SADDLE[1] - 8, 11, '#6b4c22');
+    haloText(c, 'הערוץ', P(0.585, 0.60)[0] + 16, P(0.585, 0.60)[1], 11, '#2e5866');
+    haloText(c, 'דרך עפר', 0.14 * W, ROAD_Y * H - 8, 11, '#2b2f22');
+    haloText(c, 'בור מים', WATER[0], WATER[1] + 22, 11, '#2e5866', 800);
+    if (variant === 'A') {
+      haloText(c, 'נ.ה', START[0] + 2, START[1] + 16, 12, '#26301c', 800);
+    } else {
+      // עץ בודד — נקודת העזיבה של תרגיל ב׳
+      const [tx, ty] = TREE;
+      c.strokeStyle = '#5a4326'; c.lineWidth = 3;
+      c.beginPath(); c.moveTo(tx, ty); c.lineTo(tx, ty - 10); c.stroke();
+      c.fillStyle = '#3f6b2e'; c.beginPath(); c.arc(tx, ty - 15, 8, 0, TAU); c.fill();
+      c.strokeStyle = '#2c4d20'; c.lineWidth = 1.5; c.beginPath(); c.arc(tx, ty - 15, 8, 0, TAU); c.stroke();
+      haloText(c, 'עץ בודד', tx, ty + 15, 11, '#2c4d20', 800);
+      haloText(c, 'התחלה', WATER[0], WATER[1] - 16, 12, '#26301c', 800);
+      haloText(c, 'היעד', START[0] + 2, START[1] + 16, 12, '#b5482f', 800);
+    }
+  }
+
   function drawScene(prog) { // prog = כמה קטעי ציר לצייר (0..SEGS.length)
     if (!base) buildBase();
     ctx.putImageData(base, 0, 0);
-    // הערוץ (כחול)
-    ctx.strokeStyle = '#4a7c8c'; ctx.lineWidth = 3; ctx.lineCap = 'round';
-    ctx.beginPath();
-    CH.forEach(([u, v], i) => { const [x, y] = P(u, v); i ? ctx.lineTo(x, y) : ctx.moveTo(x, y); });
-    ctx.stroke();
-    // דרך עפר (מקווקו שחור)
-    ctx.strokeStyle = '#2b2f22'; ctx.lineWidth = 2.5; ctx.setLineDash([9, 6]);
-    ctx.beginPath(); ctx.moveTo(0.04 * W, ROAD_Y * H); ctx.lineTo(0.97 * W, ROAD_Y * H); ctx.stroke();
-    ctx.setLineDash([]);
-    // בור מים (סמל מפה: עיגול כחול)
-    ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(WATER[0], WATER[1], 8, 0, TAU); ctx.fill();
-    ctx.strokeStyle = '#4a7c8c'; ctx.lineWidth = 2.5; ctx.beginPath(); ctx.arc(WATER[0], WATER[1], 8, 0, TAU); ctx.stroke();
-    ctx.fillStyle = '#4a7c8c'; ctx.beginPath(); ctx.arc(WATER[0], WATER[1], 3, 0, TAU); ctx.fill();
-    // דגל נ.ה
-    ctx.strokeStyle = '#26301c'; ctx.lineWidth = 2.5;
-    ctx.beginPath(); ctx.moveTo(START[0], START[1]); ctx.lineTo(START[0], START[1] - 20); ctx.stroke();
-    ctx.fillStyle = '#4e9a3a';
-    ctx.beginPath(); ctx.moveTo(START[0], START[1] - 20); ctx.lineTo(START[0] - 15, START[1] - 14); ctx.lineTo(START[0], START[1] - 8); ctx.closePath(); ctx.fill();
-    // תוויות
-    haloText('נ.ה', START[0] + 2, START[1] + 16, 12, '#26301c', 800);
-    haloText('האוכף', SADDLE[0], SADDLE[1] - 8, 11, '#6b4c22');
-    haloText('הערוץ', P(0.585, 0.60)[0] + 16, P(0.585, 0.60)[1], 11, '#2e5866');
-    haloText('דרך עפר', 0.14 * W, ROAD_Y * H - 8, 11, '#2b2f22');
-    haloText('בור מים', WATER[0], WATER[1] + 22, 11, '#2e5866', 800);
+    paintScenery(ctx, 'A');
     // קטעי הציר שכבר "סופרו"
     ctx.strokeStyle = '#b5482f'; ctx.lineWidth = 3.5; ctx.lineCap = 'round'; ctx.setLineDash([1, 7]);
     for (let s = 0; s < prog; s++) SEGS[s] && SEGS[s]();
@@ -781,6 +821,77 @@ const gridTrainer = (() => {
 
   document.getElementById('storyReset').addEventListener('click', reset);
   reset();
+
+  /* --- תרגיל ב׳ (הפוך): הציר מצויר — כתבו את הסיפור --- */
+  const cv2 = document.getElementById('storyCanvas2');
+  if (cv2) {
+    const ctx2 = cv2.getContext('2d');
+
+    function arrow(c, a, b) {
+      const ang = Math.atan2(b[1] - a[1], b[0] - a[0]);
+      const mx = (a[0] + b[0]) / 2, my = (a[1] + b[1]) / 2;
+      c.save(); c.translate(mx, my); c.rotate(ang); c.setLineDash([]);
+      c.fillStyle = '#b5482f';
+      c.beginPath(); c.moveTo(7, 0); c.lineTo(-5, -6); c.lineTo(-5, 6); c.closePath(); c.fill();
+      c.restore();
+    }
+
+    function drawB() {
+      if (!base) buildBase();
+      ctx2.putImageData(base, 0, 0);
+      paintScenery(ctx2, 'B');
+      // ציר ב׳: בור המים ← מערבה לאורך הדרך ← עץ בודד ← טיפוס צפונה לפסגה
+      const RB = [WATER, JUNCTION, TREE, START];
+      ctx2.strokeStyle = '#b5482f'; ctx2.lineWidth = 3.5; ctx2.lineCap = 'round'; ctx2.setLineDash([1, 7]);
+      for (let i = 0; i < RB.length - 1; i++) {
+        ctx2.beginPath(); ctx2.moveTo(RB[i][0], RB[i][1]); ctx2.lineTo(RB[i + 1][0], RB[i + 1][1]); ctx2.stroke();
+      }
+      ctx2.setLineDash([]);
+      for (let i = 0; i < RB.length - 1; i++) arrow(ctx2, RB[i], RB[i + 1]);
+      // עיגול יעד
+      ctx2.strokeStyle = '#b5482f'; ctx2.lineWidth = 3;
+      ctx2.beginPath(); ctx2.arc(START[0], START[1], 15, 0, TAU); ctx2.stroke();
+    }
+
+    // רכיבי הסיפור שנבדקים (זיהוי מילות מפתח — בדיקת שלמות, לא ציון)
+    const CHECKS = [
+      { label: 'כיוון היציאה (מערבה)', re: /מערב/, hint: 'לאיזה כיוון יוצאים מבור המים?' },
+      { label: 'הקו המוביל (דרך העפר)', re: /דרך|קו מוביל/, hint: 'לאיזה תוואי נצמדים לאורך הרגל?' },
+      { label: 'נקודת גבייה (מפגש הערוץ)', re: /ערוץ|צומת|מפגש/, hint: 'מה פוגשים בדרך שמאשר את ההתקדמות?' },
+      { label: 'נקודת העזיבה (העץ הבודד)', re: /עץ/, hint: 'איזה תוואי מסמן לכם לעזוב את הדרך?' },
+      { label: 'הטיפוס (צפונה / במעלה)', re: /צפונ|מטפס|עול|עלי|במעלה/, hint: 'איך מתארים את הקטע האחרון?' },
+      { label: 'זיהוי היעד (הפסגה)', re: /פסג|גבוה/, hint: 'איך יודעים שהגעתם?' },
+      { label: 'קו עצירה (התחלת ירידה)', re: /עציר|לרדת|ירידה|יורד/, hint: 'מה מאותת שעברתם את היעד?' }
+    ];
+
+    document.getElementById('storyCheckBtn').addEventListener('click', () => {
+      const txt = document.getElementById('storyWrite').value.trim();
+      const out = document.getElementById('storyCheck');
+      const fb2 = document.getElementById('storyFeedback2');
+      if (txt.length < 20) {
+        out.innerHTML = '';
+        fb2.className = 'feedback bad';
+        fb2.textContent = 'כתבו את הסיפור במלואו (לפחות כמה משפטים) ואז בדקו.';
+        return;
+      }
+      let found = 0;
+      out.innerHTML = CHECKS.map(c => {
+        const ok = c.re.test(txt);
+        if (ok) found++;
+        return `<span class="check-chip ${ok ? 'ok' : 'miss'}" title="${ok ? '' : c.hint}">${ok ? '✓' : '✗'} ${c.label}</span>`;
+      }).join('');
+      if (found === CHECKS.length) {
+        fb2.className = 'feedback ok';
+        fb2.textContent = `🎯 מצוין — כל ${CHECKS.length} רכיבי הסיפור נמצאו! השוו לסיפור לדוגמה לניסוח.`;
+      } else {
+        fb2.className = 'feedback bad';
+        fb2.textContent = `נמצאו ${found} מתוך ${CHECKS.length} רכיבים. רחפו מעל ✗ לרמז, השלימו ובדקו שוב.`;
+      }
+      document.getElementById('storyModel').classList.remove('hidden');
+    });
+
+    drawB();
+  }
 })();
 
 /* =======================================================================
@@ -819,7 +930,7 @@ const gridTrainer = (() => {
     { id:'ridge', name:'שלוחה', sub:'לשון גבוהה, קווי גובה ⋀ במורד',
       side:`<path d="M6,52 C26,46 44,26 84,14 L84,52 Z" fill="#8a9a5b"/><path d="M6,52 C26,46 44,26 84,14" fill="none" stroke="#4a5d2b" stroke-width="1.2"/>`,
       map:`<g fill="none" stroke="${C}" stroke-width="1.6"><path d="M14,14 Q45,34 76,14"/><path d="M14,26 Q45,46 76,26"/><path d="M14,38 Q45,58 76,38"/></g>` },
-    { id:'valley', name:'ערוץ', sub:'תוואי ניקוז, קווי גובה ⋁ במעלה',
+    { id:'valley', name:'גיא (ובקרקעיתו ערוץ)', sub:'השקע שבין הרכסים, קווי גובה ⋁ במעלה',
       side:`<polygon points="6,14 45,52 84,14 84,52 6,52" fill="#8a9a5b"/><polyline points="6,14 45,52 84,14" fill="none" stroke="#4a5d2b" stroke-width="1"/><line x1="45" y1="52" x2="45" y2="30" stroke="#4a7c8c" stroke-width="1.6"/>`,
       map:`<g fill="none" stroke="${C}" stroke-width="1.6"><path d="M14,46 Q45,26 76,46"/><path d="M14,34 Q45,14 76,34"/><path d="M14,58 Q45,38 76,58"/></g><line x1="45" y1="18" x2="45" y2="50" stroke="#4a7c8c" stroke-width="1.4" stroke-dasharray="2 2"/>` },
     { id:'cliff', name:'מצוק', sub:'שינוי גובה חד — קווים נדחסים',
@@ -900,12 +1011,14 @@ const gridTrainer = (() => {
       o:['20 מ׳','50 מ׳','100 מ׳','200 מ׳'], a:3, e:'אין לקבוע נ״צ/נ.ה/מ.ח/נ.ב/נ.ס במרחק קטן מ־200 מ׳ ממכשולים פתוחים, תוך ציונם בתדריך. [מקור 13]' },
     { q:'לפי מנחה 011, מהו ציון המעבר במבחן הבטיחות בנושא "ניווטים"?',
       o:['60','70','85','100'], a:2, e:'כל מנווט חייב לעבור מבחן בטיחות בנושא ניווטים בציון 85 לפחות לפני ביצוע ניווט. [מקור 13]' },
-    { q:'כיצד ייראו קווי הגובה של ערוץ (אפיק ניקוז)?',
-      o:['מעגלים סגורים','⋁ שקודקודו פונה במעלה (נגד זרימת המים)','קווים ישרים ומקבילים','⋀ שקודקודו פונה במורד'], a:1, e:'בערוץ קווי הגובה יוצרים ⋁ שקודקודו פונה במעלה; בשלוחה הפוך — ⋀ במורד. [מקור 4]' },
+    { q:'כיצד ייראו קווי הגובה של גיא (שבקרקעיתו זורם הערוץ)?',
+      o:['מעגלים סגורים','⋁ שקודקודו פונה במעלה (נגד זרימת המים)','קווים ישרים ומקבילים','⋀ שקודקודו פונה במורד'], a:1, e:'בגיא קווי הגובה יוצרים ⋁ שקודקודו פונה במעלה; בשלוחה הפוך — ⋀ במורד. הערוץ הוא אפיק הזרימה שבקרקעית הגיא. [מקורות 4, 17]' },
     { q:'מהי מטרת הנדב״ר (נוהל דיבור ברדיו) בזמן ניווט?',
       o:['הצפנת ההודעה כך שהאויב לא יבין','דיבור תקין, קצר ומובן ומניעת הפרעות ברשת','הגדלת טווח מכשיר הקשר','חישוב אזימוט אל המטרה'], a:1, e:'נדב״ר נועד למבנה דיבור תקין, קיצור התקשורת, מניעת הפרעות ווידוא הבנה — מטרתו אינה הצפנה. [מקור 14]' },
     { q:'בסיפור דרך — מהו "קו עצירה"?',
-      o:['הקו שבו עוצרים למנוחה ושתייה','תוואי בולט שנמצא אחרי הנקודה, שמאותת שעברנו אותה','הקו שמפריד בין גזרות הניווט','קו הרשת הקרוב ביותר לנקודה'], a:1, e:'קו עצירה הוא רשת הביטחון של הרגל: תוואי ברור מעבר לנקודה — אם הגעתם אליו, עברתם את הנקודה וחוזרים. [מקורות 15–16]' }
+      o:['הקו שבו עוצרים למנוחה ושתייה','תוואי בולט שנמצא אחרי הנקודה, שמאותת שעברנו אותה','הקו שמפריד בין גזרות הניווט','קו הרשת הקרוב ביותר לנקודה'], a:1, e:'קו עצירה הוא רשת הביטחון של הרגל: תוואי ברור מעבר לנקודה — אם הגעתם אליו, עברתם את הנקודה וחוזרים. [מקורות 15–16]' },
+    { q:'בין שתי נקודות על המפה נספרו 6 מרווחים בין קווי גובה (פרש 10 מ׳). מה הפרש הגובה ביניהן?',
+      o:['6 מ׳','30 מ׳','60 מ׳','600 מ׳'], a:2, e:'הפרש הגובה = מספר המרווחים × פרש הגובה: 6 × 10 = 60 מ׳. כך מחשבים גם שיפוע: הפרש גובה חלקי מרחק אופקי. [מקור 4]' }
   ];
   let i = 0, score = 0, answered = false;
 

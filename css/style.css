@@ -388,6 +388,24 @@ ul.tight li { margin: 3px 0; color: var(--text-soft); }
 }
 @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-5px)} 75%{transform:translateX(5px)} }
 
+/* ---------- סיפור דרך: תרגיל הפוך (כתיבה) ---------- */
+textarea#storyWrite {
+  width: 100%; padding: 10px 12px; border: 1px solid var(--border); border-radius: 8px;
+  font-family: inherit; font-size: 0.95rem; line-height: 1.6;
+  background: var(--surface-2); color: var(--text); resize: vertical;
+}
+.check-wrap { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.check-chip {
+  font-size: 0.8rem; font-weight: 700; padding: 4px 10px; border-radius: 999px;
+  border: 1px solid; cursor: default;
+}
+.check-chip.ok { background: rgba(78,154,58,0.14); border-color: rgba(78,154,58,0.5); color: #3c7a2f; }
+html[data-theme="dark"] .check-chip.ok { color: #8fce7f; }
+.check-chip.miss { background: rgba(181,72,47,0.1); border-color: rgba(181,72,47,0.45); color: var(--danger); }
+.model-story { margin-top: 12px; background: var(--surface-2); border: 1px solid var(--border); border-radius: 8px; padding: 10px 14px; }
+.model-story summary { cursor: pointer; font-weight: 700; color: var(--heading); }
+.model-story p { margin: 10px 0 4px; font-size: 0.93rem; line-height: 1.7; color: var(--text); }
+
 /* ---------- סיפור דרך: שלד בסדנה ---------- */
 .story-skel { margin-top: 20px; border-top: 1px dashed var(--border); padding-top: 14px; }
 .story-skel .leg-story {
