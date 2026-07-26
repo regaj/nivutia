@@ -163,6 +163,19 @@ body {
 .nlm-banner .btn { white-space: nowrap; }
 @media (max-width: 560px) { .nlm-banner { flex-direction: column; text-align: center; } .nlm-banner .btn { width: 100%; } }
 
+/* ---------- מצגות הקורס ---------- */
+.btn.decks-cta {
+  background: linear-gradient(135deg, #7d8c4e, #4a5d2b);
+  color: #fff; border: 2px solid var(--accent);
+}
+.btn.decks-cta:hover { box-shadow: 0 6px 18px rgba(74,93,43,0.5); }
+.decks-strip { margin: 26px 0 0; }
+.decks-strip > h3 { margin: 0 0 4px; color: var(--heading); font-size: 1.25rem; }
+.decks-strip > p { margin: 0 0 14px; }
+.deck-card { display: flex; flex-direction: column; }
+.deck-card p { flex: 1; }
+.deck-btn { margin-top: 14px; font-size: 0.92rem; padding: 10px 14px; }
+
 /* ---------- Sections ---------- */
 main { max-width: 1180px; margin: 0 auto; padding: 0 16px; }
 .section { padding: 52px 0 40px; border-bottom: 1px dashed var(--border); }
