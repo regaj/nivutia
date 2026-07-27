@@ -30,6 +30,7 @@
       <a href="#nz">דקירת נ״צ</a>
       <a href="#azimuth">אזימוט</a>
       <a href="#norths">צפונים</a>
+      <a href="#compass">מצפן</a>
       <a href="#route">בניית ציר</a>
       <a href="#story">סיפור דרך</a>
       <a href="#comms">נדב״ר</a>
@@ -392,11 +393,67 @@
     </div>
   </section>
 
-  <!-- ============ 8. BUILDING A NAVIGATION ROUTE ============ -->
+  <!-- ============ 9. PHONE COMPASS ============ -->
+  <section class="section" id="compass">
+    <div class="section-head">
+      <span class="kicker">כלי עזר דיגיטלי</span>
+      <h2><span class="num">9</span>המצפן שבכיס 🧭</h2>
+      <p class="lead">לטלפון שלכם יש מגנטומטר — אותו חיישן שמאחורי כל אפליקציית מצפן. כאן הוא הופך למצפן ניווט של ממש: קריאת אזימוט מגנטי חי, המרה אוטומטית לאזימוט רשת (עם הסטייה המגנטית שלמדנו למעלה), ו<b>נעילת אזימוט</b> — בדיוק כמו הליכה על אזימוט בשטח.</p>
+    </div>
+
+    <div class="tool-layout">
+      <div class="compass-stage" id="compassStage">
+        <div class="compass-wrap">
+          <div class="lubber">▼</div>
+          <svg id="compassRose" viewBox="-150 -150 300 300" aria-label="שושנת מצפן"></svg>
+        </div>
+        <button class="btn" id="compassEnable">🧭 הפעלת המצפן</button>
+        <p class="small" id="compassStatus">המצפן דורש טלפון עם חיישן כיוון. במחשב — יופעל מצב הדגמה.</p>
+        <div class="demo-ctl hidden" id="demoCtl">
+          <label class="fld">מצב הדגמה — סובבו את "הטלפון": <span id="demoVal">0°</span></label>
+          <input type="range" id="demoSlider" min="0" max="359" value="0">
+        </div>
+      </div>
+      <div class="controls">
+        <div class="control-card">
+          <h3>📟 קריאות</h3>
+          <div class="result-grid">
+            <div class="result"><div class="val" id="cmpMag">—</div><div class="lbl">אזימוט מגנטי</div></div>
+            <div class="result"><div class="val" id="cmpGrid">—</div><div class="lbl">אזימוט רשת (+4.9°)</div></div>
+            <div class="result"><div class="val" id="cmpDir">—</div><div class="lbl">כיוון (שושנת הרוחות)</div></div>
+            <div class="result"><div class="val" id="cmpSrc">—</div><div class="lbl">מקור הקריאה</div></div>
+          </div>
+        </div>
+        <div class="control-card">
+          <h3>🎯 הליכה על אזימוט</h3>
+          <p class="small" style="margin-top:0">הזינו אזימוט מגנטי, נעלו — וסובבו את הגוף עד שהחץ יתיישר והמסגרת תוריק. בדיוק כמו עם מצפן ביד.</p>
+          <div class="row">
+            <div><label class="fld">אזימוט מטרה (מגנטי)</label><input type="number" id="lockAz" min="0" max="359" placeholder="למשל 245"></div>
+            <div style="display:flex;align-items:flex-end"><button class="btn" id="lockBtn" style="width:100%">נעילה</button></div>
+          </div>
+          <div class="lock-ind hidden" id="lockInd">
+            <div class="lock-arrow" id="lockArrow">⟳</div>
+            <div class="lock-text" id="lockText">—</div>
+          </div>
+        </div>
+        <div class="control-card">
+          <h3 style="font-size:1rem">⚠️ לפני שסומכים על זה</h3>
+          <ul class="tight">
+            <li><b>כיול:</b> הניעו את הטלפון בתנועת ∞ (שמינייה) באוויר כמה שניות.</li>
+            <li><b>הפרעות:</b> התרחקו ממתכת, מגנטים ורמקולים — הם מטים את הקריאה.</li>
+            <li><b>אחיזה:</b> החזיקו את הטלפון שטוח (מקביל לקרקע), מסך כלפי מעלה, במאונך (portrait).</li>
+            <li><b>דיוק:</b> מצפן טלפון עלול לסטות ב־5°–10° ויותר. <b>כלי לימודי בלבד</b> — בניווט אמיתי משתמשים במצפן ייעודי לפי הנהלים.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 10. BUILDING A NAVIGATION ROUTE ============ -->
   <section class="section" id="route">
     <div class="section-head">
       <span class="kicker">מבוסס מנחה 011</span>
-      <h2><span class="num">9</span>איך בונים ציר ניווט?</h2>
+      <h2><span class="num">10</span>איך בונים ציר ניווט?</h2>
       <p class="lead">בניית ציר ניווט אינה רק "לחבר נקודות". על פי <b>מנחה 011 של צה״ל — הוראות בטיחות לניווטים</b>, לציר יש רכיבים מוגדרים, כללי בטיחות למיקום הנקודות, וחישוב זמן וקצב. כך בונים ציר, שלב אחר שלב.<sup class="ref"><a href="#src13">13</a></sup></p>
     </div>
 
@@ -473,7 +530,7 @@
   <section class="section" id="story">
     <div class="section-head">
       <span class="kicker">לב הניווט בפועל</span>
-      <h2><span class="num">10</span>סיפור דרך — לנווט בלי מפה</h2>
+      <h2><span class="num">11</span>סיפור דרך — לנווט בלי מפה</h2>
       <p class="lead"><b>בניווט עצמו המפה סגורה.</b> הצוער לומד את הציר בשלב התכנון, מְשַׁנֵּן אותו — ובשטח מנווט <b>מהזיכרון</b>; המפה נפתחת רק במקרה חירום או אובדן דרך. הכלי שמאפשר זאת הוא <b>סיפור הדרך</b>: תרגום הציר לסיפור מילולי־תמונתי, רגל אחר רגל — "מאיפה אני יוצא, מה אני אמור לראות, מתי עברתי את הנקודה". העיקרון זהה לזה של ה־Roadbook בניווט ראלי: תנועה במקטעים של כיוון ומרחק תוך היצמדות לתוואי הקרקע.<sup class="ref"><a href="#src15">15</a></sup></p>
     </div>
 
@@ -560,7 +617,7 @@
   <section class="section" id="comms">
     <div class="section-head">
       <span class="kicker">קשר בזמן ניווט</span>
-      <h2><span class="num">11</span>נדב״ר — נוהל דיבור ברשת</h2>
+      <h2><span class="num">12</span>נדב״ר — נוהל דיבור ברשת</h2>
       <p class="lead">בזמן ניווט מתנהל <b>קשר ברשת</b>: לפי מנחה 011 מתבצעת בדיקת קשר עם כל המנווטים לפחות אחת לשעה, לצד דיווחים ונוהל ברבור, ולכל חוליה מכשיר קשר.<sup class="ref"><a href="#src13">13</a></sup> כל התקשורת הזו מתנהלת לפי <b>נדב״ר — נוהל דיבור ברשת</b> (מכונה גם "נוהל דיבור ברדיו"): נוהל מקובל בצה״ל ובצבאות זרים לתקשורת במכשירי קשר. העיקרון: <b>"חושב, לוחץ, מדבר"</b>.<sup class="ref"><a href="#src14">14</a></sup></p>
     </div>
 
@@ -653,7 +710,7 @@
   <section class="section" id="planner">
     <div class="section-head">
       <span class="kicker">סדנה יצירתית</span>
-      <h2><span class="num">12</span>סדנה: תכננו ציר ניווט ובנו כרטיס ניווט</h2>
+      <h2><span class="num">13</span>סדנה: תכננו ציר ניווט ובנו כרטיס ניווט</h2>
       <p class="lead">עכשיו אתם המתכננים. בחרו סוג נקודה (נ.ה / נ.צ / מ.ח / נ.ב / נ.ס) ולחצו על הלוח כדי להניחה. הכלי בונה עבורכם <b>כרטיס ניווט</b> מלא — לכל "רגל" יחושבו האזימוט (רשת ומגנטי), המרחק ואומדן הצעדים. בדיוק כמו התוצר שצוער בונה לפני ניווט.</p>
     </div>
     <div class="tool-layout">
@@ -713,7 +770,7 @@
   <section class="section" id="quiz">
     <div class="section-head">
       <span class="kicker">מבחן עצמי</span>
-      <h2><span class="num">13</span>בוחן: קריאת מפה, ניווט ובטיחות</h2>
+      <h2><span class="num">14</span>בוחן: קריאת מפה, ניווט ובטיחות</h2>
       <p class="lead">במנחה 011 נדרש כל מנווט לעבור <b>מבחן בטיחות בנושא "ניווטים" בציון 85 לפחות</b> לפני ביצוע ניווט.<sup class="ref"><a href="#src13">13</a></sup> בדקו את עצמכם — הבוחן משלב שאלות מכל פרקי האתר. לכל שאלה מוצג הסבר עם המקור.</p>
     </div>
     <div class="quiz-card" id="quizCard"></div>
@@ -723,7 +780,7 @@
   <section class="section" id="sources">
     <div class="section-head">
       <span class="kicker">אימות</span>
-      <h2><span class="num">14</span>מקורות</h2>
+      <h2><span class="num">15</span>מקורות</h2>
       <p class="lead">כל הנתונים אומתו במספר מקורות. להלן הרשימה המלאה עם קישורים ישירים.</p>
     </div>
     <ul class="src-list">

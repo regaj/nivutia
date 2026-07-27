@@ -729,6 +729,167 @@ const gridTrainer = (() => {
 })();
 
 /* =======================================================================
+   5ב. המצפן שבכיס — מגנטומטר הטלפון כמצפן ניווט
+   ======================================================================= */
+(() => {
+  const rose = document.getElementById('compassRose');
+  if (!rose) return;
+  const NS = 'http://www.w3.org/2000/svg';
+  const DECL = 4.9; // סטייה מגנטית משוערת בישראל (ראו סעיף הצפונים)
+  const enableBtn = document.getElementById('compassEnable');
+  const status = document.getElementById('compassStatus');
+  const demoCtl = document.getElementById('demoCtl');
+  const demoSlider = document.getElementById('demoSlider');
+  const wrap = document.querySelector('.compass-wrap');
+  const els = {
+    mag: document.getElementById('cmpMag'), grid: document.getElementById('cmpGrid'),
+    dir: document.getElementById('cmpDir'), src: document.getElementById('cmpSrc'),
+    lockInd: document.getElementById('lockInd'), lockArrow: document.getElementById('lockArrow'),
+    lockText: document.getElementById('lockText')
+  };
+  const DIR8 = ['צפון', 'צפון־מזרח', 'מזרח', 'דרום־מזרח', 'דרום', 'דרום־מערב', 'מערב', 'צפון־מערב'];
+
+  /* --- בניית השושנה (מסתובבת כולה; קו הקריאה קבוע למעלה) --- */
+  const dial = document.createElementNS(NS, 'g');
+  dial.setAttribute('class', 'dial');
+  (function build() {
+    const bg = document.createElementNS(NS, 'circle');
+    bg.setAttribute('r', 148); bg.setAttribute('fill', 'var(--surface-2)');
+    bg.setAttribute('stroke', 'var(--border)'); bg.setAttribute('stroke-width', 2);
+    rose.appendChild(bg); rose.appendChild(dial);
+    for (let a = 0; a < 360; a += 2) {
+      const big = a % 30 === 0, mid = a % 10 === 0;
+      const t = document.createElementNS(NS, 'line');
+      const r1 = big ? 122 : mid ? 128 : 133, r2 = 140;
+      const rad = a * Math.PI / 180, s = Math.sin(rad), c = -Math.cos(rad);
+      t.setAttribute('x1', s * r1); t.setAttribute('y1', c * r1);
+      t.setAttribute('x2', s * r2); t.setAttribute('y2', c * r2);
+      t.setAttribute('stroke', a === 0 ? 'var(--danger)' : 'var(--text-soft)');
+      t.setAttribute('stroke-width', big ? 2.4 : mid ? 1.6 : 0.8);
+      dial.appendChild(t);
+      if (big) {
+        const tx = document.createElementNS(NS, 'text');
+        tx.setAttribute('x', s * 108); tx.setAttribute('y', c * 108 + 4);
+        tx.setAttribute('text-anchor', 'middle');
+        tx.setAttribute('font-size', '13'); tx.setAttribute('font-weight', '700');
+        tx.setAttribute('fill', 'var(--text-soft)');
+        tx.setAttribute('transform', `rotate(${a} ${s * 108} ${c * 108})`);
+        tx.textContent = a;
+        dial.appendChild(tx);
+      }
+    }
+    const CARD = [['צ', 0, 'var(--danger)'], ['מז', 90, 'var(--heading)'], ['ד', 180, 'var(--heading)'], ['מע', 270, 'var(--heading)']];
+    CARD.forEach(([l, a, col]) => {
+      const rad = a * Math.PI / 180, s = Math.sin(rad), c = -Math.cos(rad);
+      const tx = document.createElementNS(NS, 'text');
+      tx.setAttribute('x', s * 78); tx.setAttribute('y', c * 78 + 8);
+      tx.setAttribute('text-anchor', 'middle'); tx.setAttribute('font-size', '24');
+      tx.setAttribute('font-weight', '800'); tx.setAttribute('fill', col);
+      tx.setAttribute('transform', `rotate(${a} ${s * 78} ${c * 78})`);
+      tx.textContent = l;
+      dial.appendChild(tx);
+    });
+    // מחט צפון (חלק מהשושנה — מצביעה תמיד אל הצפון המגנטי)
+    const needle = document.createElementNS(NS, 'g');
+    needle.innerHTML = `<polygon points="0,-64 9,0 -9,0" fill="var(--danger)"/><polygon points="0,64 9,0 -9,0" fill="var(--text-soft)" opacity="0.55"/><circle r="7" fill="var(--heading)"/>`;
+    dial.appendChild(needle);
+  })();
+
+  /* --- מצב ותצוגה --- */
+  let heading = null, shown = 0, target = null, mode = null;
+  const norm = a => ((a % 360) + 360) % 360;
+  const sdiff = (a, b) => ((a - b + 540) % 360) - 180;
+
+  function render() {
+    if (heading == null) return;
+    shown += sdiff(heading, shown) * 0.3;
+    shown = norm(shown);
+    dial.setAttribute('transform', `rotate(${-shown})`);
+    const h = Math.round(norm(heading)) % 360;
+    els.mag.textContent = h + '°';
+    els.grid.textContent = Math.round(norm(heading + DECL)) % 360 + '°';
+    els.dir.textContent = DIR8[Math.round(norm(heading) / 45) % 8];
+    if (target != null) {
+      const d = sdiff(target, heading);
+      const on = Math.abs(d) <= 3;
+      els.lockInd.classList.toggle('on-target', on);
+      wrap.classList.toggle('locked-on', on);
+      if (on) {
+        els.lockArrow.textContent = '✓';
+        els.lockText.textContent = `על הכיוון! ${Math.round(norm(target))}° — התקדמו ישר.`;
+        if (!render.buzzed && navigator.vibrate) { navigator.vibrate(90); render.buzzed = true; }
+      } else {
+        render.buzzed = false;
+        els.lockArrow.textContent = d > 0 ? '⟳' : '⟲';
+        els.lockText.textContent = `סובבו ${d > 0 ? 'ימינה' : 'שמאלה'} ${Math.abs(Math.round(d))}°`;
+      }
+    }
+  }
+  let ticker = null;
+  function setHeading(h, src) {
+    heading = norm(h);
+    if (src) els.src.textContent = src;
+    render();
+    // טיקר קבוע שמריץ את ההחלקה גם בין אירועי חיישן (עמיד יותר מ-rAF בטאבים ברקע)
+    if (!ticker) ticker = setInterval(render, 120);
+  }
+
+  /* --- חיישנים --- */
+  function onOrient(e) {
+    if (e.webkitCompassHeading != null && !isNaN(e.webkitCompassHeading)) {
+      setHeading(e.webkitCompassHeading, 'חיישן (iOS)');
+    } else if (e.alpha != null) {
+      const screenA = (screen.orientation && screen.orientation.angle) || 0;
+      setHeading(360 - e.alpha + screenA, e.absolute ? 'חיישן (מוחלט)' : 'חיישן (יחסי)');
+    }
+  }
+  function startSensors() {
+    if ('ondeviceorientationabsolute' in window) {
+      window.addEventListener('deviceorientationabsolute', onOrient);
+    }
+    window.addEventListener('deviceorientation', onOrient);
+    status.textContent = 'המצפן פעיל — החזיקו את הטלפון שטוח, מסך למעלה. אם הקריאה קופצת: כיול בתנועת ∞.';
+    enableBtn.classList.add('hidden');
+    // אם אחרי 2.5 שניות אין קריאה — כנראה אין חיישן: דמו
+    setTimeout(() => { if (heading == null) startDemo('לא זוהה חיישן כיוון — עברנו למצב הדגמה.'); }, 2500);
+  }
+  function startDemo(msg) {
+    if (mode === 'demo') return;
+    mode = 'demo';
+    demoCtl.classList.remove('hidden');
+    enableBtn.classList.add('hidden');
+    status.textContent = (msg || 'מצב הדגמה.') + ' גררו את הסליידר כדי "לסובב את הטלפון".';
+    setHeading(+demoSlider.value, 'מצב הדגמה');
+  }
+  demoSlider.addEventListener('input', () => {
+    document.getElementById('demoVal').textContent = demoSlider.value + '°';
+    setHeading(+demoSlider.value, 'מצב הדגמה');
+  });
+
+  enableBtn.addEventListener('click', () => {
+    mode = 'live';
+    const DOE = window.DeviceOrientationEvent;
+    if (!DOE) { startDemo('הדפדפן לא תומך בחיישן כיוון.'); return; }
+    if (typeof DOE.requestPermission === 'function') {
+      DOE.requestPermission().then(p => {
+        if (p === 'granted') startSensors();
+        else status.textContent = 'ההרשאה נדחתה — אפשרו גישה לחיישני תנועה בהגדרות הדפדפן, או נסו שוב.';
+      }).catch(() => startDemo('לא ניתן לבקש הרשאת חיישן (נדרש HTTPS ומחווה של המשתמש).'));
+    } else {
+      startSensors();
+    }
+  });
+
+  document.getElementById('lockBtn').addEventListener('click', () => {
+    const v = parseFloat(document.getElementById('lockAz').value);
+    if (isNaN(v)) { els.lockInd.classList.remove('hidden'); els.lockArrow.textContent = '…'; els.lockText.textContent = 'הזינו אזימוט 0–359 ונעלו.'; return; }
+    target = norm(v);
+    els.lockInd.classList.remove('hidden');
+    render();
+  });
+})();
+
+/* =======================================================================
    6ב. סיפור דרך — מפה + משחק סידור המשפטים
    ======================================================================= */
 (() => {
