@@ -59,6 +59,16 @@ html[data-theme="dark"] {
 html { scroll-behavior: smooth; scroll-padding-top: 92px; }
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
 
+/* רשת ביטחון נגד גלישה רוחבית (פריסה שבורה במובייל/זום) */
+html, body { max-width: 100%; overflow-x: clip; }
+img, canvas, svg, video { max-width: 100%; }
+/* ילדי grid מסרבים להתכווץ מתחת לתוכן (min-width:auto) — משחרר, כדי ש-overflow פנימי יעבוד */
+.tool-layout > *, .map-layout > *, .grid-2 > *, .grid-3 > *, .real-layout > *,
+.decks-strip .grid-3 > *, .result-grid > * { min-width: 0; }
+@media (max-width: 900px) {
+  .tool-layout > *, .map-layout > *, .grid-2 > *, .grid-3 > *, .real-layout > * { grid-column: auto !important; }
+}
+
 body {
   margin: 0;
   font-family: var(--font);
