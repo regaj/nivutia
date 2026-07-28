@@ -1153,6 +1153,223 @@ const gridTrainer = (() => {
 })();
 
 /* =======================================================================
+   6ג. מעבדת הציר האולטימטיבי — זיהוי נת״בים ובחירת חלופה
+   ======================================================================= */
+(() => {
+  const cv = document.getElementById('ultimateCanvas');
+  if (!cv) return;
+  const ctx = cv.getContext('2d');
+  const W = cv.width, H = cv.height;
+  const INTERVAL = 10;
+
+  const gauss = (u, v, cu, cv2, su, sv) => Math.exp(-(((u - cu) ** 2) / (2 * su * su) + ((v - cv2) ** 2) / (2 * sv * sv)));
+  function heightAt(u, v) {
+    let h = 16;
+    h += 64 * gauss(u, v, 0.82, 0.20, 0.17, 0.14);  // ההר של נ.ס (צפון־מזרח)
+    h += 52 * gauss(u, v, 0.24, 0.30, 0.16, 0.15);  // גבעה מערבית
+    h += 34 * gauss(u, v, 0.56, 0.74, 0.14, 0.10);  // שלוחה דרומית (חלופה ג׳)
+    h += 42 * gauss(u, v, 0.72, 0.52, 0.12, 0.11);  // המשך השלוחה במעלה
+    return Math.max(0, h);
+  }
+
+  const NH = [65, 405], NS = [470, 85];
+  // נת״בים
+  const FIRE = [[150, 140], [285, 120], [300, 250], [165, 275]]; // מצולע שטח אש
+  const FIREC = [228, 195];
+  const PIT = [300, 335];
+  const CLIFF = [[395, 205], [455, 245]];
+  const CLIFFC = [(CLIFF[0][0] + CLIFF[1][0]) / 2, (CLIFF[0][1] + CLIFF[1][1]) / 2];
+
+  const HAZ = [
+    { key: 'fire', label: 'שטח אש 104', c: FIREC, r: 75, found: false },
+    { key: 'pit', label: 'בור פתוח', c: PIT, r: 32, found: false },
+    { key: 'cliff', label: 'רכס מצוקים', c: CLIFFC, r: 42, found: false }
+  ];
+
+  const ROUTES = {
+    a: { pts: [[65,405],[140,330],[195,250],[228,185],[300,148],[395,112],[470,85]], label: 'א' },
+    b: { pts: [[65,405],[180,370],[300,335],[368,290],[424,226],[470,85]], label: 'ב' },
+    c: { pts: [[65,405],[190,420],[320,398],[430,338],[492,248],[500,158],[470,85]], label: 'ג' }
+  };
+  const VERDICT = {
+    a: { ok: false, html: '<b>✗ נפסלת מיד.</b> החלופה חוצה את <b>שטח האש</b> — בטיחות פוסלת, ולא משנה כמה היא קצרה. שימו לב שהיא גם עוברת "באמצע שום מקום": אין קו מוביל, אין סיפור דרך.' },
+    b: { ok: false, html: '<b>✗ מפתה — אבל נפסלת.</b> הכי קצרה שנותרה, אבל עוברת <b>צמוד לבור הפתוח</b> (הרבה פחות מ־200 המטרים של מנחה 011) ואז <b>חוצה את רכס המצוקים</b> — אין עבירות, ובלילה מסוכן שבעתיים.' },
+    c: { ok: true, html: '<b>✓ הציר האולטימטיבי!</b> ארוכה בכ־15% — אבל עוקפת את שטח האש מדרום, שומרת מרחק מהבור, <b>נצמדת לשלוחה</b> (קו מוביל ברור לסיפור הדרך) ומטפסת לנ.ס מהצד המתון. בטיחות ✓ עבירות ✓ תוואי ✓ — ככה מכריעים.' }
+  };
+
+  let phase = 1, chosen = null, base = null;
+
+  function buildBase() {
+    const img = ctx.createImageData(W, H);
+    const d = img.data;
+    const hs = new Float32Array(W * H);
+    let mn = Infinity, mx = -Infinity;
+    for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
+      const h = heightAt(x / W, y / H); hs[y * W + x] = h;
+      if (h < mn) mn = h; if (h > mx) mx = h;
+    }
+    for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
+      const i = y * W + x, h = hs[i], t = (h - mn) / (mx - mn);
+      let r, g, b;
+      if (t < 0.5) { const k = t / 0.5; r = 124 + k * 56; g = 144 + k * 26; b = 84 + k * 16; }
+      else { const k = (t - 0.5) / 0.5; r = 180 + k * 40; g = 170 - k * 30; b = 100 - k * 40; }
+      const band = Math.floor(h / INTERVAL);
+      const bl = x > 0 ? Math.floor(hs[i - 1] / INTERVAL) : band;
+      const bu = y > 0 ? Math.floor(hs[i - W] / INTERVAL) : band;
+      const isC = band !== bl || band !== bu;
+      const p = i * 4;
+      if (isC) { const c = band % 5 === 0 ? 72 : 112; d[p] = c; d[p + 1] = c * 0.7; d[p + 2] = c * 0.4; }
+      else { d[p] = r; d[p + 1] = g; d[p + 2] = b; }
+      d[p + 3] = 255;
+    }
+    base = img;
+  }
+
+  function halo(txt, x, y, size = 12, color = '#22271c', w = 800) {
+    ctx.font = `${w} ${size}px Heebo, sans-serif`; ctx.textAlign = 'center';
+    ctx.lineWidth = 3.5; ctx.strokeStyle = 'rgba(255,255,255,0.85)';
+    ctx.strokeText(txt, x, y); ctx.fillStyle = color; ctx.fillText(txt, x, y);
+  }
+  function flag(x, y, color, label) {
+    ctx.strokeStyle = '#26301c'; ctx.lineWidth = 2.5;
+    ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x, y - 20); ctx.stroke();
+    ctx.fillStyle = color;
+    ctx.beginPath(); ctx.moveTo(x, y - 20); ctx.lineTo(x - 15, y - 14); ctx.lineTo(x, y - 8); ctx.closePath(); ctx.fill();
+    halo(label, x + 2, y + 15);
+  }
+  function poly(pts) { ctx.beginPath(); pts.forEach((p, i) => i ? ctx.lineTo(p[0], p[1]) : ctx.moveTo(p[0], p[1])); }
+
+  function drawHazards() {
+    // שטח אש — קווקוו אדום
+    ctx.save();
+    poly(FIRE); ctx.closePath(); ctx.clip();
+    ctx.strokeStyle = 'rgba(181,72,47,0.55)'; ctx.lineWidth = 1.6;
+    for (let x = -H; x < W; x += 11) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x + H, H); ctx.stroke(); }
+    ctx.restore();
+    poly(FIRE); ctx.closePath();
+    ctx.strokeStyle = '#b5482f'; ctx.lineWidth = 2; ctx.stroke();
+    // בור — סמל
+    ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(PIT[0], PIT[1], 7, 0, TAU); ctx.fill();
+    ctx.strokeStyle = '#22271c'; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(PIT[0], PIT[1], 7, 0, TAU); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(PIT[0] - 4, PIT[1]); ctx.lineTo(PIT[0] + 4, PIT[1]); ctx.stroke();
+    // מצוק — שנתות
+    const [c1, c2] = CLIFF;
+    const dx = c2[0] - c1[0], dy = c2[1] - c1[1], L = Math.hypot(dx, dy), nx = -dy / L, ny = dx / L;
+    ctx.strokeStyle = '#22271c'; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.moveTo(c1[0], c1[1]); ctx.lineTo(c2[0], c2[1]); ctx.stroke();
+    for (let t = 0; t <= 1.001; t += 0.12) {
+      const px = c1[0] + dx * t, py = c1[1] + dy * t;
+      ctx.beginPath(); ctx.moveTo(px, py); ctx.lineTo(px + nx * 8, py + ny * 8); ctx.stroke();
+    }
+    // סימוני "נמצא"
+    HAZ.forEach(hz => {
+      if (!hz.found) return;
+      ctx.strokeStyle = '#b5482f'; ctx.lineWidth = 3; ctx.setLineDash([6, 4]);
+      ctx.beginPath(); ctx.arc(hz.c[0], hz.c[1], hz.r * 0.7, 0, TAU); ctx.stroke(); ctx.setLineDash([]);
+      halo(hz.label, hz.c[0], hz.c[1] - hz.r * 0.7 - 6, 12, '#b5482f');
+    });
+  }
+
+  function drawRoutes() {
+    if (phase < 2) return;
+    Object.entries(ROUTES).forEach(([k, r]) => {
+      const sel = chosen === k;
+      ctx.strokeStyle = sel ? (VERDICT[k].ok ? '#3c7a2f' : '#b5482f') : 'rgba(38,48,28,0.75)';
+      ctx.lineWidth = sel ? 5 : 3;
+      ctx.setLineDash(sel ? [] : [8, 6]);
+      ctx.globalAlpha = chosen && !sel ? 0.35 : 1;
+      poly(r.pts); ctx.stroke();
+      ctx.setLineDash([]); ctx.globalAlpha = 1;
+      const mid = r.pts[Math.floor(r.pts.length / 2)];
+      ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(mid[0], mid[1], 11, 0, TAU); ctx.fill();
+      ctx.strokeStyle = '#26301c'; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(mid[0], mid[1], 11, 0, TAU); ctx.stroke();
+      halo(r.label, mid[0], mid[1] + 4, 13, '#26301c');
+    });
+  }
+
+  function draw() {
+    if (!base) buildBase();
+    ctx.putImageData(base, 0, 0);
+    drawHazards();
+    drawRoutes();
+    flag(NH[0], NH[1], '#4e9a3a', 'נ.ה');
+    flag(NS[0], NS[1], '#b5482f', 'נ.ס');
+  }
+
+  const countEl = document.getElementById('ntbCount');
+  const fb = document.getElementById('ntbFeedback');
+  const pickCard = document.getElementById('routePickCard');
+  const verdictEl = document.getElementById('routeVerdict');
+  const segBtns = [...document.querySelectorAll('#routeSeg button')];
+
+  function unlock() {
+    phase = 2;
+    pickCard.style.opacity = 1;
+    segBtns.forEach(b => b.disabled = false);
+    fb.className = 'feedback ok';
+    fb.textContent = '🎉 כל הנת״בים סומנו! עכשיו — שלוש החלופות הופיעו על המפה. בחרו.';
+    draw();
+  }
+
+  cv.addEventListener('click', ev => {
+    const rect = cv.getBoundingClientRect();
+    const x = (ev.clientX - rect.left) * (W / rect.width);
+    const y = (ev.clientY - rect.top) * (H / rect.height);
+    if (phase === 1) {
+      const hit = HAZ.find(hz => !hz.found && Math.hypot(x - hz.c[0], y - hz.c[1]) <= hz.r);
+      if (hit) {
+        hit.found = true;
+        const n = HAZ.filter(h => h.found).length;
+        countEl.textContent = n + '/3';
+        fb.className = 'feedback ok';
+        fb.textContent = `✓ ${hit.label} — סומן.`;
+        draw();
+        if (n === 3) unlock();
+      } else {
+        fb.className = 'feedback bad';
+        fb.textContent = '✗ כאן לא זיהיתי נת״ב. חפשו סימנים חריגים: אזור מקווקו, סמל בור, שנתות מצוק.';
+      }
+    } else {
+      // בחירת מסלול בלחיצה על המפה — לפי קרבה לקו
+      let best = null, bd = 14;
+      Object.entries(ROUTES).forEach(([k, r]) => {
+        for (let i = 0; i < r.pts.length - 1; i++) {
+          const [ax, ay] = r.pts[i], [bx, by] = r.pts[i + 1];
+          const ddx = bx - ax, ddy = by - ay, l2 = ddx * ddx + ddy * ddy;
+          let t = l2 ? ((x - ax) * ddx + (y - ay) * ddy) / l2 : 0; t = Math.max(0, Math.min(1, t));
+          const dd = Math.hypot(x - (ax + t * ddx), y - (ay + t * ddy));
+          if (dd < bd) { bd = dd; best = k; }
+        }
+      });
+      if (best) choose(best);
+    }
+  });
+
+  function choose(k) {
+    chosen = k;
+    segBtns.forEach(b => b.classList.toggle('on', b.dataset.route === k));
+    verdictEl.classList.remove('hidden');
+    verdictEl.classList.toggle('warn', !VERDICT[k].ok);
+    verdictEl.innerHTML = VERDICT[k].html;
+    draw();
+  }
+  segBtns.forEach(b => b.addEventListener('click', () => choose(b.dataset.route)));
+
+  document.getElementById('ultimateReset').addEventListener('click', () => {
+    phase = 1; chosen = null;
+    HAZ.forEach(h => h.found = false);
+    countEl.textContent = '0/3';
+    fb.textContent = ''; fb.className = 'feedback';
+    verdictEl.classList.add('hidden');
+    pickCard.style.opacity = 0.45;
+    segBtns.forEach(b => { b.disabled = true; b.classList.remove('on'); });
+    draw();
+  });
+
+  draw();
+})();
+
+/* =======================================================================
    7. החלפת מצב תצוגה (Dark / Light)
    ======================================================================= */
 (() => {
@@ -1282,7 +1499,9 @@ const gridTrainer = (() => {
     { q:'מדוע כיפה סמויה אינה מסומנת במפה בקו גובה סגור?',
       o:['כי היא סודית','כי גובהה נמוך מפרש הגובה (10 מ׳) בין קווים סמוכים','כי היא מכוסה יער','כי אין עליה נקודת גובה'], a:1, e:'כיפה סמויה בולטת פחות מפרש הגובה (10 מ׳), ולכן אין סביבה קו סגור. מזהים אותה לפי השלוחות והגיאיות שסביבה. [מקור 18]' },
     { q:'בנדב״ר — התחנה הקולטת לא הבינה את ההודעה. מה היא אומרת?',
-      o:['"חזור"','"אמור שנית"','"הקרא"','"קבל תיקון"'], a:1, e:'"אמור שנית" — הקולטת מבקשת מהמשדרת לחזור. לעולם לא "חזור" (עלול להתפרש כחזרה על ביצוע הפקודה); "הקרא" הוא ההפך — המשדרת מבקשת מהקולטת להקריא. [מקור 18]' }
+      o:['"חזור"','"אמור שנית"','"הקרא"','"קבל תיקון"'], a:1, e:'"אמור שנית" — הקולטת מבקשת מהמשדרת לחזור. לעולם לא "חזור" (עלול להתפרש כחזרה על ביצוע הפקודה); "הקרא" הוא ההפך — המשדרת מבקשת מהקולטת להקריא. [מקור 18]' },
+    { q:'בתכנון ציר מתברר שהחלופה הקצרה ביותר חוצה פינה של שטח אש. מה הפעולה הנכונה?',
+      o:['עוברים בה מהר ובשקט','מבקשים אישור מהחפ״ק תוך כדי הניווט','פוסלים אותה ובונים חלופה עוקפת, גם אם ארוכה יותר','עוברים רק בשעות היום'], a:2, e:'בטיחות פוסלת: מסלול שחוצה שטח אש יורד מהשולחן מיד, ובוחרים חלופה שעוקפת ונצמדת לתוואי ברור — גם במחיר אורך. [מקורות 13, 18]' }
   ];
   let i = 0, score = 0, answered = false;
 

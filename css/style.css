@@ -314,6 +314,7 @@ input[type="range"] { width: 100%; accent-color: var(--olive-600); }
   font-family: inherit; font-weight: 600; font-size: 0.9rem;
 }
 .seg button.on { background: var(--olive-600); color: #fff; }
+.seg button:disabled { opacity: 0.45; cursor: not-allowed; }
 
 .result-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 8px; }
 .result { background: var(--surface-2); border-radius: 8px; padding: 10px 12px; text-align: center; }
